@@ -63,6 +63,46 @@ h1 {
   color: #ffce52;
 }
 
+
+.audio-panel {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 206, 82, 0.22);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.42);
+  box-shadow: inset 0 0 16px rgba(255, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.audio-panel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #eeeeee;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.audio-panel input[type='range'] {
+  width: 120px;
+  accent-color: #ffce52;
+}
+
+.audio-panel p {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.mute-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  box-shadow: 0 0 12px rgba(226, 53, 53, 0.3);
+}
+
 .boss-ui {
   margin-bottom: 12px;
   padding: 12px 14px;
@@ -614,7 +654,8 @@ button:hover {
   .top-area,
   .guide,
   .status-box,
-  .boss-info {
+  .boss-info,
+  .audio-panel {
     flex-direction: column;
     align-items: flex-start;
   }

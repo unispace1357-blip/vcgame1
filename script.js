@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const bossMaxHpText = document.getElementById('bossMaxHpText');
   const bossHpBar = document.getElementById('bossHpBar');
   const clearEffect = document.getElementById('clearEffect');
+  const bgmVolumeControl = document.getElementById('bgmVolume');
+  const sfxVolumeControl = document.getElementById('sfxVolume');
+  const muteBtn = document.getElementById('muteBtn');
 
   const MAX_HP = 2;
   const SWORD_DAMAGE = 8;
@@ -31,6 +34,120 @@ document.addEventListener('DOMContentLoaded', () => {
   let swords = [];
   let timers = [];
   let animationId = null;
+
+  let audioCtx = null;
+  let masterGain = null;
+  let bgmGain = null;
+  let sfxGain = null;
+  let bgmTimer = null;
+  let bgmStep = 0;
+  let isMuted = false;
+
+  function ensureAudioContext() {
+    if (audioCtx) return;
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+
+    audioCtx = new AudioContext();
+    masterGain = audioCtx.createGain();
+    bgmGain = audioCtx.createGain();
+    sfxGain = audioCtx.createGain();
+
+    bgmGain.connect(masterGain);
+    sfxGain.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
+    masterGain.gain.value = 1;
+
+    updateAudioLevels();
+  }
+
+  function updateAudioLevels() {
+    const bgmVolume = bgmVolumeControl ? Number(bgmVolumeControl.value) / 100 : 0.35;
+    const sfxVolume = sfxVolumeControl ? Number(sfxVolumeControl.value) / 100 : 0.7;
+
+    if (bgmGain) bgmGain.gain.value = isMuted ? 0 : bgmVolume * 0.34;
+    if (sfxGain) sfxGain.gain.value = isMuted ? 0 : sfxVolume * 0.5;
+    if (muteBtn) muteBtn.textContent = isMuted ? '음소거 ON' : '음소거 OFF';
+  }
+
+  function startAudioSystem() {
+    ensureAudioContext();
+
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
+
+    updateAudioLevels();
+    startBgm();
+  }
+
+  function playTone(frequency, duration, type = 'sine', volume = 0.4, target = 'sfx', delay = 0) {
+    if (!audioCtx) return;
+
+    const output = target === 'bgm' ? bgmGain : sfxGain;
+    if (!output) return;
+
+    const now = audioCtx.currentTime + delay;
+    const oscillator = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, now);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(Math.max(volume, 0.0001), now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    oscillator.connect(gain);
+    gain.connect(output);
+    oscillator.start(now);
+    oscillator.stop(now + duration + 0.04);
+  }
+
+  function startBgm() {
+    if (!audioCtx || bgmTimer) return;
+
+    const pattern = [110, 146.83, 164.81, 196, 146.83, 123.47, 164.81, 220];
+
+    const playBgmStep = () => {
+      const note = pattern[bgmStep % pattern.length];
+      playTone(note, 0.3, 'triangle', 0.18, 'bgm');
+
+      if (bgmStep % 4 === 0) {
+        playTone(note / 2, 0.42, 'sine', 0.09, 'bgm', 0.02);
+      }
+
+      bgmStep += 1;
+    };
+
+    playBgmStep();
+    bgmTimer = setInterval(playBgmStep, 380);
+  }
+
+  function stopBgm() {
+    if (!bgmTimer) return;
+
+    clearInterval(bgmTimer);
+    bgmTimer = null;
+  }
+
+  function playPlayerHitSound() {
+    playTone(185, 0.08, 'sawtooth', 0.5);
+    playTone(92, 0.14, 'square', 0.22, 'sfx', 0.05);
+  }
+
+  function playPlayerDeathSound() {
+    playTone(260, 0.13, 'sawtooth', 0.46);
+    playTone(170, 0.2, 'sawtooth', 0.42, 'sfx', 0.14);
+    playTone(82, 0.36, 'square', 0.32, 'sfx', 0.35);
+  }
+
+  function playBossClearSound() {
+    playTone(330, 0.12, 'triangle', 0.42);
+    playTone(494, 0.15, 'triangle', 0.42, 'sfx', 0.12);
+    playTone(659, 0.24, 'triangle', 0.48, 'sfx', 0.27);
+  }
 
   function getSwordCount() {
     return Math.min(level, 6);
@@ -115,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function startGame() {
     resetGame();
+    startAudioSystem();
     gameRunning = true;
     message.classList.add('hidden');
     startLevelTimers();
@@ -444,6 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hazard.hit || isLevelChanging) return;
     hazard.hit = true;
     hp -= 1;
+    playPlayerHitSound();
     updateHud();
     player.classList.add('damaged');
     setTimer(() => player.classList.remove('damaged'), 240, false);
@@ -527,6 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isLevelChanging = true;
     bossHp = 0;
     score += 500 + level * 120;
+    playBossClearSound();
     updateHud();
     clearTimers(false);
     removeRaidObjects();
@@ -559,6 +679,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function endGame() {
     gameRunning = false;
     isLevelChanging = false;
+    playPlayerDeathSound();
+    stopBgm();
     clearTimers();
     removeRaidObjects();
 
@@ -571,6 +693,21 @@ document.addEventListener('DOMContentLoaded', () => {
         <button id="restartBtn" type="button">다시 도전</button>
       </div>
     `;
+  }
+
+  if (bgmVolumeControl) {
+    bgmVolumeControl.addEventListener('input', updateAudioLevels);
+  }
+
+  if (sfxVolumeControl) {
+    sfxVolumeControl.addEventListener('input', updateAudioLevels);
+  }
+
+  if (muteBtn) {
+    muteBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      updateAudioLevels();
+    });
   }
 
   message.addEventListener('click', (event) => {
