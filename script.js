@@ -63,10 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateAudioLevels() {
-    const bgmVolume = bgmVolumeControl ? Number(bgmVolumeControl.value) / 100 : 0.35;
+    const bgmVolume = bgmVolumeControl ? Number(bgmVolumeControl.value) / 100 : 0.55;
     const sfxVolume = sfxVolumeControl ? Number(sfxVolumeControl.value) / 100 : 0.7;
 
-    if (bgmGain) bgmGain.gain.value = isMuted ? 0 : bgmVolume * 0.34;
+    if (bgmGain) bgmGain.gain.value = isMuted ? 0 : bgmVolume * 0.52;
     if (sfxGain) sfxGain.gain.value = isMuted ? 0 : sfxVolume * 0.5;
     if (muteBtn) muteBtn.textContent = isMuted ? '음소거 ON' : '음소거 OFF';
   }
@@ -108,21 +108,39 @@ document.addEventListener('DOMContentLoaded', () => {
   function startBgm() {
     if (!audioCtx || bgmTimer) return;
 
-    const pattern = [110, 146.83, 164.81, 196, 146.83, 123.47, 164.81, 220];
+    // 던전 입장 느낌을 위해 밝은 멜로디보다 낮은 드론음과 단조 음계를 사용합니다.
+    const dungeonPattern = [
+      73.42, 87.31, 98.0, 87.31,
+      73.42, 65.41, 73.42, 110.0,
+      98.0, 87.31, 73.42, 65.41,
+    ];
 
     const playBgmStep = () => {
-      const note = pattern[bgmStep % pattern.length];
-      playTone(note, 0.3, 'triangle', 0.18, 'bgm');
+      const note = dungeonPattern[bgmStep % dungeonPattern.length];
 
-      if (bgmStep % 4 === 0) {
-        playTone(note / 2, 0.42, 'sine', 0.09, 'bgm', 0.02);
+      // 낮게 깔리는 던전 드론음
+      if (bgmStep % 8 === 0) {
+        playTone(36.71, 1.35, 'sine', 0.18, 'bgm');
+      }
+
+      // 어둡고 반복적인 메인 음형
+      playTone(note, 0.34, 'triangle', 0.24, 'bgm');
+
+      // 얇은 금속성 긴장감
+      if (bgmStep % 3 === 0) {
+        playTone(note * 2, 0.16, 'sine', 0.055, 'bgm', 0.08);
+      }
+
+      // 심장박동 같은 저음 펄스
+      if (bgmStep % 4 === 2) {
+        playTone(49.0, 0.18, 'square', 0.075, 'bgm', 0.03);
       }
 
       bgmStep += 1;
     };
 
     playBgmStep();
-    bgmTimer = setInterval(playBgmStep, 380);
+    bgmTimer = setInterval(playBgmStep, 420);
   }
 
   function stopBgm() {
