@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>던전 레이드 패턴 회피</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="game-wrap">
+    <header class="top-area">
+      <div>
+        <h1>던전 레이드 패턴 회피</h1>
+        <p>보스의 패턴을 피해 60초 동안 생존하세요!</p>
+      </div>
+
+      <div class="status-box">
+        <span>남은 시간: <strong id="time">60</strong>초</span>
+        <span>HP: <strong id="hp">3</strong></span>
+        <span>점수: <strong id="score">0</strong></span>
+      </div>
+    </header>
+
+    <main id="gameArea" class="game-area">
+      <div id="boss" class="boss">BOSS</div>
+      <div id="player" class="player"></div>
+      <div id="message" class="message">
+        <h2>RAID START</h2>
+        <p>스페이스바 또는 시작 버튼을 눌러 시작</p>
+        <button id="startBtn">게임 시작</button>
+      </div>
+    </main>
+
+    <section class="guide">
+      <p><strong>조작:</strong> ← → 방향키로 이동</p>
+      <p><strong>승리 조건:</strong> 60초 생존</p>
+      <p><strong>패배 조건:</strong> HP 0</p>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
