@@ -70,6 +70,9 @@
             <span>LV1: 상단 낙하 공격</span>
             <span>LV2: 좌우 공격 추가</span>
             <span>LV3+: 장판·추적·레이저</span>
+            <span>LV6+: 저속 추적 마력구</span>
+            <span>랭킹: 사망 후 닉네임 저장</span>
+            <span>TOP3: 금·은·동 메달</span>
           </div>
 
           <button id="startBtn" type="button">게임 시작</button>
@@ -77,6 +80,19 @@
         </div>
       </div>
     </main>
+
+
+
+    <section class="ranking-panel" aria-label="랭킹">
+      <div class="ranking-header">
+        <div>
+          <p class="eyebrow">LOCAL RANKING</p>
+          <h2>TOP 10 플레이 로그</h2>
+        </div>
+        <span>사망 후 닉네임을 남기면 기록됩니다.</span>
+      </div>
+      <ol id="rankingList" class="ranking-list"></ol>
+    </section>
 
     <section class="guide">
       <p><strong>조작:</strong> WASD 또는 방향키 이동</p>

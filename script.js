@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const bgmVolumeControl = document.getElementById('bgmVolume');
   const sfxVolumeControl = document.getElementById('sfxVolume');
   const muteBtn = document.getElementById('muteBtn');
+  const rankingList = document.getElementById('rankingList');
 
   const MAX_HP = 2;
   const SWORD_DAMAGE = 8;
@@ -45,6 +46,124 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastBossHitSoundTime = 0;
 
   const AUDIO_STORAGE_KEY = 'dungeonRaidAudioSettings';
+  const RANKING_STORAGE_KEY = 'dungeonRaidRankings';
+
+  let lastRunResult = null;
+  let currentRunSaved = false;
+
+
+
+  function loadRankings() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(RANKING_STORAGE_KEY));
+      return Array.isArray(saved) ? saved : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveRankings(rankings) {
+    try {
+      localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(rankings));
+    } catch (error) {
+      // localStorage가 막힌 환경에서는 랭킹 저장만 실패하고 게임은 계속됩니다.
+    }
+  }
+
+  function normalizeNickname(value) {
+    const trimmed = String(value || '').trim();
+    if (!trimmed) return '익명 기사';
+    return trimmed.slice(0, 10);
+  }
+
+  function sortRankings(rankings) {
+    return rankings
+      .slice()
+      .sort((a, b) => {
+        if (b.level !== a.level) return b.level - a.level;
+        if (b.score !== a.score) return b.score - a.score;
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      })
+      .slice(0, 10);
+  }
+
+  function getMedal(index) {
+    if (index === 0) return '🥇';
+    if (index === 1) return '🥈';
+    if (index === 2) return '🥉';
+    return `${index + 1}`;
+  }
+
+  function createRankingItem(record, index) {
+    const item = document.createElement('li');
+    item.className = index < 3 ? `ranking-item top-${index + 1}` : 'ranking-item';
+
+    const rank = document.createElement('span');
+    rank.className = 'rank-medal';
+    rank.textContent = getMedal(index);
+
+    const name = document.createElement('span');
+    name.className = 'rank-name';
+    name.textContent = record.nickname;
+
+    const levelInfo = document.createElement('span');
+    levelInfo.className = 'rank-level';
+    levelInfo.textContent = `LV.${record.level}`;
+
+    const scoreInfo = document.createElement('span');
+    scoreInfo.className = 'rank-score';
+    scoreInfo.textContent = `${record.score}점`;
+
+    item.append(rank, name, levelInfo, scoreInfo);
+    return item;
+  }
+
+  function renderRankingList(target) {
+    if (!target) return;
+
+    const rankings = sortRankings(loadRankings());
+    target.innerHTML = '';
+
+    if (rankings.length === 0) {
+      const empty = document.createElement('li');
+      empty.className = 'ranking-empty';
+      empty.textContent = '아직 저장된 플레이 로그가 없습니다.';
+      target.appendChild(empty);
+      return;
+    }
+
+    rankings.forEach((record, index) => {
+      target.appendChild(createRankingItem(record, index));
+    });
+  }
+
+  function renderRankings() {
+    renderRankingList(rankingList);
+    renderRankingList(document.getElementById('resultRankingList'));
+  }
+
+  function saveCurrentRunToRanking() {
+    if (!lastRunResult || currentRunSaved) return;
+
+    const input = document.getElementById('nicknameInput');
+    const nickname = normalizeNickname(input ? input.value : '');
+    const record = {
+      nickname,
+      level: lastRunResult.level,
+      score: lastRunResult.score,
+      date: new Date().toISOString(),
+    };
+
+    const rankings = sortRankings([...loadRankings(), record]);
+    saveRankings(rankings);
+    currentRunSaved = true;
+    renderRankings();
+
+    const saveArea = document.getElementById('rankingSaveArea');
+    if (saveArea) {
+      saveArea.innerHTML = `<p class="rank-save-done"><strong>${nickname}</strong>님의 기록이 저장되었습니다.</p>`;
+    }
+  }
 
   function ensureAudioContext() {
     if (audioCtx) return;
@@ -284,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function removeRaidObjects() {
     document
-      .querySelectorAll('.pattern, .warning-line, .side-warning, .floor-warning, .floor-blast, .tracking-warning, .tracking-blast, .laser-warning, .laser-beam, .sword-wave, .damage-text, .boss-explosion')
+      .querySelectorAll('.pattern, .warning-line, .side-warning, .floor-warning, .floor-blast, .tracking-warning, .tracking-blast, .laser-warning, .laser-beam, .magic-orb, .sword-wave, .damage-text, .boss-explosion')
       .forEach((el) => el.remove());
     hazards = [];
     swords = [];
@@ -307,6 +426,8 @@ document.addEventListener('DOMContentLoaded', () => {
     removeRaidObjects();
     gameRunning = false;
     isLevelChanging = false;
+    lastRunResult = null;
+    currentRunSaved = false;
     hp = MAX_HP;
     level = 1;
     score = 0;
@@ -325,7 +446,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startGame() {
-    resetGame();
+    renderRankings();
+  resetGame();
     startAudioSystem();
     gameRunning = true;
     message.classList.add('hidden');
@@ -380,6 +502,13 @@ document.addEventListener('DOMContentLoaded', () => {
         createLaser();
       }, Math.max(2950, 5050 - level * 85));
     }
+
+    if (level >= 6) {
+      setTimer(() => {
+        if (!gameRunning || isLevelChanging) return;
+        createMagicOrb();
+      }, Math.max(4400, 6200 - level * 90));
+    }
   }
 
   function gameLoop() {
@@ -430,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!gameRunning || isLevelChanging) return;
 
       const pattern = document.createElement('div');
-      pattern.className = 'pattern falling-pattern';
+      pattern.className = 'pattern falling-pattern meteor-pattern vertical-meteor';
       pattern.style.left = `${x + 10}px`;
       pattern.style.top = '0px';
       gameArea.appendChild(pattern);
@@ -477,7 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!gameRunning || isLevelChanging) return;
 
       const pattern = document.createElement('div');
-      pattern.className = 'pattern side-pattern';
+      pattern.className = `pattern side-pattern meteor-pattern ${fromLeft ? 'left-meteor' : 'right-meteor'}`;
       pattern.style.left = fromLeft ? '-40px' : `${gameArea.clientWidth + 6}px`;
       pattern.style.top = `${y}px`;
       gameArea.appendChild(pattern);
@@ -563,6 +692,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 820, false);
   }
 
+  function createMagicOrb() {
+    // LV6부터 등장하는 저속 추적 마력구입니다.
+    // 한 번에 1개만 유지해서 난이도는 살짝만 올리고, W/S 이동 사용을 유도합니다.
+    if (gameArea.querySelector('.magic-orb')) return;
+
+    const areaRect = gameArea.getBoundingClientRect();
+    const bossRect = boss.getBoundingClientRect();
+    const orbSize = 34;
+    const startX = bossRect.left - areaRect.left + bossRect.width / 2 - orbSize / 2;
+    const startY = bossRect.top - areaRect.top + bossRect.height - 4;
+    const targetX = playerX + player.clientWidth / 2;
+    const targetY = playerY + player.clientHeight / 2;
+    const dx = targetX - (startX + orbSize / 2);
+    const dy = targetY - (startY + orbSize / 2);
+    const distance = Math.max(Math.hypot(dx, dy), 1);
+    const speed = 2.15 + Math.min(level * 0.08, 0.85);
+
+    const orb = document.createElement('div');
+    orb.className = 'magic-orb';
+    orb.style.left = `${startX}px`;
+    orb.style.top = `${startY}px`;
+    gameArea.appendChild(orb);
+
+    hazards.push({
+      element: orb,
+      x: startX,
+      y: startY,
+      vx: (dx / distance) * speed,
+      vy: (dy / distance) * speed,
+      speed,
+      kind: 'magicOrb',
+      homingUntil: Date.now() + 1200,
+      hit: false,
+      removeOutside: true,
+    });
+  }
+
   function fireSwordWaves() {
     const count = getSwordCount();
     const areaRect = gameArea.getBoundingClientRect();
@@ -602,6 +768,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function moveHazards() {
     for (let i = hazards.length - 1; i >= 0; i -= 1) {
       const hazard = hazards[i];
+      if (hazard.kind === 'magicOrb' && Date.now() < hazard.homingUntil) {
+        const orbRect = hazard.element.getBoundingClientRect();
+        const areaRect = gameArea.getBoundingClientRect();
+        const orbCenterX = orbRect.left - areaRect.left + orbRect.width / 2;
+        const orbCenterY = orbRect.top - areaRect.top + orbRect.height / 2;
+        const targetX = playerX + player.clientWidth / 2;
+        const targetY = playerY + player.clientHeight / 2;
+        const dx = targetX - orbCenterX;
+        const dy = targetY - orbCenterY;
+        const distance = Math.max(Math.hypot(dx, dy), 1);
+        const targetVx = (dx / distance) * hazard.speed;
+        const targetVy = (dy / distance) * hazard.speed;
+
+        // 완전 유도탄이 아니라 약하게만 방향을 보정해서 억까 느낌을 줄입니다.
+        hazard.vx = hazard.vx * 0.84 + targetVx * 0.16;
+        hazard.vy = hazard.vy * 0.84 + targetVy * 0.16;
+      }
+
       hazard.x += hazard.vx;
       hazard.y += hazard.vy;
 
@@ -776,6 +960,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function endGame() {
     gameRunning = false;
     isLevelChanging = false;
+    lastRunResult = { level, score };
+    currentRunSaved = false;
     playPlayerDeathSound();
     stopBgm();
     clearTimers();
@@ -783,13 +969,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     message.classList.remove('hidden');
     message.innerHTML = `
-      <div class="start-card result-card">
+      <div class="start-card result-card ranking-result-card">
         <p class="raid-label">RAID FAILED</p>
         <h2>기사 전투 불능</h2>
         <p class="desc">도달 레벨: ${level}<br />최종 점수: ${score}</p>
+
+        <div id="rankingSaveArea" class="ranking-save-area">
+          <label for="nicknameInput">닉네임 입력</label>
+          <div class="nickname-row">
+            <input id="nicknameInput" type="text" maxlength="10" placeholder="예: 재윤기사" autocomplete="off" />
+            <button id="saveRankBtn" class="save-rank-btn" type="button">기록 저장</button>
+          </div>
+          <p>저장된 기록은 이 브라우저의 localStorage에 보관됩니다.</p>
+        </div>
+
+        <div class="result-ranking-box">
+          <h3>TOP 10 랭킹</h3>
+          <ol id="resultRankingList" class="ranking-list compact-ranking"></ol>
+        </div>
+
         <button id="restartBtn" type="button">다시 도전</button>
       </div>
     `;
+    renderRankings();
+
+    const nicknameInput = document.getElementById('nicknameInput');
+    if (nicknameInput) nicknameInput.focus();
   }
 
   if (bgmVolumeControl) {
@@ -811,8 +1016,20 @@ document.addEventListener('DOMContentLoaded', () => {
   updateAudioLevels(false);
 
   message.addEventListener('click', (event) => {
+    if (event.target.id === 'saveRankBtn') {
+      saveCurrentRunToRanking();
+      return;
+    }
+
     if (event.target.id === 'startBtn' || event.target.id === 'restartBtn') {
       startGame();
+    }
+  });
+
+  message.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && event.target.id === 'nicknameInput') {
+      event.preventDefault();
+      saveCurrentRunToRanking();
     }
   });
 
@@ -832,5 +1049,6 @@ document.addEventListener('DOMContentLoaded', () => {
     keys[event.key] = false;
   });
 
+  renderRankings();
   resetGame();
 });
