@@ -51,13 +51,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return timer;
   }
 
-  function clearTimers() {
+  function clearTimers(stopAnimation = true) {
     timers.forEach(({ timer, isInterval }) => {
       if (isInterval) clearInterval(timer);
       else clearTimeout(timer);
     });
     timers = [];
-    cancelAnimationFrame(animationId);
+
+    // 레벨 전환 시에는 게임 루프(requestAnimationFrame)를 멈추면 안 됩니다.
+    // 게임 루프가 멈추면 워닝 사인은 생성되지만 공/레이저가 이동하지 않는 문제가 생깁니다.
+    if (stopAnimation && animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
   }
 
   function removeRaidObjects() {
@@ -111,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startLevelTimers() {
-    clearTimers();
+    clearTimers(false);
     removeRaidObjects();
 
     setTimer(() => {
@@ -501,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bossHp = 0;
     score += 500 + level * 120;
     updateHud();
-    clearTimers();
+    clearTimers(false);
     removeRaidObjects();
 
     showBossExplosion();
