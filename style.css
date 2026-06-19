@@ -231,28 +231,33 @@ h1 {
 .player::before {
   content: '';
   position: absolute;
-  left: 11px;
-  top: -19px;
-  width: 18px;
-  height: 18px;
-  background: #e8eef7;
-  border: 3px solid #7b8ca5;
-  border-radius: 50%;
+  left: 50%;
+  top: -24px;
+  width: 24px;
+  height: 22px;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(180deg, #ffffff 0 24%, #aebed0 25% 56%, #61758f 57% 100%);
+  border: 3px solid #dff1ff;
+  border-radius: 50% 50% 42% 42%;
+  box-shadow:
+    inset 0 -7px 0 rgba(32, 47, 68, 0.65),
+    0 0 10px rgba(223, 241, 255, 0.7);
 }
 
 .player::after {
   content: '';
   position: absolute;
-  right: -17px;
-  top: -2px;
-  width: 12px;
-  height: 58px;
+  right: -18px;
+  top: -4px;
+  width: 14px;
+  height: 62px;
   background:
-    linear-gradient(135deg, transparent 0 18%, #ffffff 19% 50%, #aebed0 51% 82%, transparent 83%),
-    linear-gradient(#f8fbff, #98abbf);
-  clip-path: polygon(50% 0, 82% 18%, 65% 100%, 35% 100%, 18% 18%);
-  transform: rotate(25deg);
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.45));
+    linear-gradient(90deg, transparent 0 18%, #ffffff 19% 49%, #b9c7d8 50% 81%, transparent 82%),
+    linear-gradient(#ffffff, #8fa4bb);
+  clip-path: polygon(50% 0, 78% 16%, 59% 100%, 41% 100%, 22% 16%);
+  transform: rotate(24deg);
+  filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.55));
 }
 
 .knight {
@@ -403,26 +408,43 @@ h1 {
 
 .sword-wave {
   position: absolute;
-  width: 10px;
-  height: 34px;
-  background: linear-gradient(#ffffff, #8fd6ff);
-  clip-path: polygon(50% 0, 100% 24%, 62% 100%, 38% 100%, 0 24%);
-  box-shadow: 0 0 12px rgba(143, 214, 255, 0.9);
+  width: 18px;
+  height: 48px;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.18) 28%, transparent 56%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(102, 205, 255, 0.88) 45%, rgba(38, 109, 255, 0.08) 100%);
+  clip-path: polygon(50% 0, 72% 14%, 64% 66%, 55% 100%, 45% 100%, 36% 66%, 28% 14%);
+  box-shadow:
+    0 0 16px rgba(143, 214, 255, 0.95),
+    0 0 28px rgba(75, 152, 255, 0.55);
   transform-origin: 50% 50%;
   z-index: 4;
+}
+
+.homing-sword::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 5px;
+  width: 5px;
+  height: 36px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
 }
 
 .homing-sword::after {
   content: '';
   position: absolute;
   left: 50%;
-  bottom: -12px;
-  width: 4px;
-  height: 14px;
+  bottom: -19px;
+  width: 14px;
+  height: 28px;
   transform: translateX(-50%);
-  border-radius: 999px;
-  background: rgba(143, 214, 255, 0.45);
-  filter: blur(1px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(143, 214, 255, 0.55), rgba(143, 214, 255, 0.08) 65%, transparent 72%);
+  filter: blur(2px);
 }
 
 .damage-text {

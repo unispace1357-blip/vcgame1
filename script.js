@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const sword = document.createElement('div');
       sword.className = 'sword-wave homing-sword';
 
-      const x = startX + firstOffset + i * spacing - 5;
+      const x = startX + firstOffset + i * spacing - 9;
       const y = startY;
       const targetX = targetBaseX + firstOffset + i * spacing;
       const targetY = targetBaseY;
