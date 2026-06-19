@@ -42,6 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let bgmTimer = null;
   let bgmStep = 0;
   let isMuted = false;
+  let lastBossHitSoundTime = 0;
+
+  const AUDIO_STORAGE_KEY = 'dungeonRaidAudioSettings';
 
   function ensureAudioContext() {
     if (audioCtx) return;
@@ -62,13 +65,49 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAudioLevels();
   }
 
-  function updateAudioLevels() {
+  function loadAudioSettings() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(AUDIO_STORAGE_KEY));
+      if (!saved) return;
+
+      if (bgmVolumeControl && Number.isFinite(Number(saved.bgm))) {
+        bgmVolumeControl.value = saved.bgm;
+      }
+
+      if (sfxVolumeControl && Number.isFinite(Number(saved.sfx))) {
+        sfxVolumeControl.value = saved.sfx;
+      }
+
+      isMuted = saved.muted === true;
+    } catch (error) {
+      // 저장된 설정이 깨져 있어도 게임 실행은 계속됩니다.
+    }
+  }
+
+  function saveAudioSettings() {
+    try {
+      localStorage.setItem(
+        AUDIO_STORAGE_KEY,
+        JSON.stringify({
+          bgm: bgmVolumeControl ? Number(bgmVolumeControl.value) : 55,
+          sfx: sfxVolumeControl ? Number(sfxVolumeControl.value) : 70,
+          muted: isMuted,
+        }),
+      );
+    } catch (error) {
+      // localStorage를 사용할 수 없는 환경에서도 게임은 정상 작동합니다.
+    }
+  }
+
+  function updateAudioLevels(shouldSave = false) {
     const bgmVolume = bgmVolumeControl ? Number(bgmVolumeControl.value) / 100 : 0.55;
     const sfxVolume = sfxVolumeControl ? Number(sfxVolumeControl.value) / 100 : 0.7;
 
-    if (bgmGain) bgmGain.gain.value = isMuted ? 0 : bgmVolume * 0.52;
+    if (bgmGain) bgmGain.gain.value = isMuted ? 0 : bgmVolume * 0.54;
     if (sfxGain) sfxGain.gain.value = isMuted ? 0 : sfxVolume * 0.5;
     if (muteBtn) muteBtn.textContent = isMuted ? '음소거 ON' : '음소거 OFF';
+
+    if (shouldSave) saveAudioSettings();
   }
 
   function startAudioSystem() {
@@ -82,37 +121,53 @@ document.addEventListener('DOMContentLoaded', () => {
     startBgm();
   }
 
-  function playTone(frequency, duration, type = 'sine', volume = 0.4, target = 'sfx', delay = 0) {
+  function playTone(
+    frequency,
+    duration,
+    type = 'sine',
+    volume = 0.4,
+    target = 'sfx',
+    delay = 0,
+    attack = 0.018,
+    release = 0.07,
+  ) {
     if (!audioCtx) return;
 
     const output = target === 'bgm' ? bgmGain : sfxGain;
     if (!output) return;
 
     const now = audioCtx.currentTime + delay;
+    const end = now + duration;
+    const attackEnd = Math.min(now + attack, end);
+    const releaseStart = Math.max(attackEnd, end - release);
     const oscillator = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
     oscillator.type = type;
     oscillator.frequency.setValueAtTime(frequency, now);
 
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(Math.max(volume, 0.0001), now + 0.015);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    // 급격한 시작/종료는 브라우저에서 지직거리는 클릭 노이즈를 만들 수 있어
+    // 선형 페이드 인/아웃으로 부드럽게 처리합니다.
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(Math.max(volume, 0), attackEnd);
+    gain.gain.setValueAtTime(Math.max(volume * 0.82, 0), releaseStart);
+    gain.gain.linearRampToValueAtTime(0, end);
 
     oscillator.connect(gain);
     gain.connect(output);
     oscillator.start(now);
-    oscillator.stop(now + duration + 0.04);
+    oscillator.stop(end + 0.03);
   }
 
   function startBgm() {
     if (!audioCtx || bgmTimer) return;
 
-    // 던전 입장 느낌을 위해 밝은 멜로디보다 낮은 드론음과 단조 음계를 사용합니다.
+    // 지직거리는 느낌을 줄이기 위해 BGM에는 square/saw 계열을 쓰지 않고,
+    // 낮은 sine 드론과 부드러운 triangle 단조 음형만 사용합니다.
     const dungeonPattern = [
-      73.42, 87.31, 98.0, 87.31,
-      73.42, 65.41, 73.42, 110.0,
-      98.0, 87.31, 73.42, 65.41,
+      65.41, 73.42, 87.31, 73.42,
+      61.74, 65.41, 73.42, 55.0,
+      65.41, 87.31, 98.0, 73.42,
     ];
 
     const playBgmStep = () => {
@@ -120,27 +175,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 낮게 깔리는 던전 드론음
       if (bgmStep % 8 === 0) {
-        playTone(36.71, 1.35, 'sine', 0.18, 'bgm');
+        playTone(32.7, 2.2, 'sine', 0.16, 'bgm', 0, 0.18, 0.55);
       }
 
-      // 어둡고 반복적인 메인 음형
-      playTone(note, 0.34, 'triangle', 0.24, 'bgm');
+      // 어두운 던전 메인 음형
+      playTone(note, 0.48, 'triangle', 0.22, 'bgm', 0, 0.055, 0.18);
 
-      // 얇은 금속성 긴장감
-      if (bgmStep % 3 === 0) {
-        playTone(note * 2, 0.16, 'sine', 0.055, 'bgm', 0.08);
-      }
-
-      // 심장박동 같은 저음 펄스
+      // 공간감용 저음 보조음
       if (bgmStep % 4 === 2) {
-        playTone(49.0, 0.18, 'square', 0.075, 'bgm', 0.03);
+        playTone(49.0, 0.42, 'sine', 0.075, 'bgm', 0.02, 0.08, 0.18);
+      }
+
+      // 아주 약한 긴장감 레이어. 고음 금속성 노이즈가 거슬리지 않도록 볼륨을 낮췄습니다.
+      if (bgmStep % 6 === 3) {
+        playTone(note * 1.5, 0.26, 'sine', 0.035, 'bgm', 0.06, 0.06, 0.14);
       }
 
       bgmStep += 1;
     };
 
     playBgmStep();
-    bgmTimer = setInterval(playBgmStep, 420);
+    bgmTimer = setInterval(playBgmStep, 520);
   }
 
   function stopBgm() {
@@ -165,6 +220,27 @@ document.addEventListener('DOMContentLoaded', () => {
     playTone(330, 0.12, 'triangle', 0.42);
     playTone(494, 0.15, 'triangle', 0.42, 'sfx', 0.12);
     playTone(659, 0.24, 'triangle', 0.48, 'sfx', 0.27);
+  }
+
+  function playBossHitSound() {
+    if (!audioCtx) return;
+
+    const now = audioCtx.currentTime;
+    if (now - lastBossHitSoundTime < 0.08) return;
+    lastBossHitSoundTime = now;
+
+    playTone(720, 0.045, 'triangle', 0.18, 'sfx');
+    playTone(410, 0.06, 'sine', 0.12, 'sfx', 0.025);
+  }
+
+  function playLevelStartSound() {
+    playTone(392, 0.11, 'triangle', 0.28);
+    playTone(523, 0.14, 'triangle', 0.32, 'sfx', 0.1);
+  }
+
+  function playLaserWarningSound() {
+    playTone(740, 0.09, 'square', 0.2);
+    playTone(520, 0.11, 'triangle', 0.16, 'sfx', 0.09);
   }
 
   function getSwordCount() {
@@ -463,6 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
     warning.className = 'laser-warning';
     warning.style.top = `${y}px`;
     gameArea.appendChild(warning);
+    playLaserWarningSound();
 
     setTimer(() => {
       if (!gameRunning || isLevelChanging) {
@@ -647,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bossHp -= SWORD_DAMAGE;
         score += 3 + level;
         showDamageText(SWORD_DAMAGE);
+        playBossHitSound();
         boss.classList.add('boss-hit');
         setTimer(() => boss.classList.remove('boss-hit'), 180, false);
         updateHud();
@@ -682,6 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
       hp = Math.min(MAX_HP, hp + 1);
       updateHud();
       clearEffect.textContent = `LEVEL ${level} START!`;
+      playLevelStartSound();
     }, 1200, false);
 
     setTimer(() => {
@@ -714,19 +793,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (bgmVolumeControl) {
-    bgmVolumeControl.addEventListener('input', updateAudioLevels);
+    bgmVolumeControl.addEventListener('input', () => updateAudioLevels(true));
   }
 
   if (sfxVolumeControl) {
-    sfxVolumeControl.addEventListener('input', updateAudioLevels);
+    sfxVolumeControl.addEventListener('input', () => updateAudioLevels(true));
   }
 
   if (muteBtn) {
     muteBtn.addEventListener('click', () => {
       isMuted = !isMuted;
-      updateAudioLevels();
+      updateAudioLevels(true);
     });
   }
+
+  loadAudioSettings();
+  updateAudioLevels(false);
 
   message.addEventListener('click', (event) => {
     if (event.target.id === 'startBtn' || event.target.id === 'restartBtn') {
