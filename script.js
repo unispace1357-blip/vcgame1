@@ -37,6 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getBossMaxHp() {
+    // 초반 이탈 방지를 위해 LV1~2는 클리어 시간을 살짝 짧게 설정했습니다.
+    // LV3부터는 기존 성장 곡선을 유지해서 무한 레벨 도전의 긴장감을 살립니다.
+    if (level === 1) return 160;
+    if (level === 2) return 360;
+
     const swordCount = getSwordCount();
     return swordCount * 200 + Math.max(0, level - 1) * 15;
   }
@@ -238,9 +243,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let y;
 
     // 하단에 붙어 있는 플레이를 막기 위해 좌우 패턴은 일정 확률로 플레이어의 현재 높이를 직접 겨냥합니다.
-    // 플레이어가 맨 밑에 있어도 warning → 좌우 공격이 들어오도록 보정했습니다.
-    if (Math.random() < 0.45) {
-      y = playerY + player.clientHeight / 2 - warningHeight / 2 + (Math.random() * 32 - 16);
+    // 이번 밸런스 수정: 최하단 근처에 있을수록 겨냥 확률을 조금 더 높여 W/S 회피를 유도합니다.
+    const isNearBottom = playerY > gameArea.clientHeight - player.clientHeight - 95;
+    const targetPlayerChance = isNearBottom ? 0.68 : 0.54;
+
+    if (Math.random() < targetPlayerChance) {
+      y = playerY + player.clientHeight / 2 - warningHeight / 2 + (Math.random() * 34 - 17);
     } else {
       y = minY + Math.random() * (maxY - minY);
     }
