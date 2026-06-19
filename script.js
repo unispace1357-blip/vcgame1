@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getTopFallSpeed() {
-    return 4.8 + level * 0.18;
+    return 5.05 + level * 0.22;
   }
 
   function setTimer(callback, delay, isInterval = true) {
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimer(() => {
       if (!gameRunning || isLevelChanging) return;
       createTopFalls(2);
-    }, Math.max(720, 1200 - level * 30));
+    }, Math.max(660, 1080 - level * 34));
 
     setTimer(() => {
       if (!gameRunning || isLevelChanging) return;
@@ -140,28 +140,28 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimer(() => {
         if (!gameRunning || isLevelChanging) return;
         createSideAttack();
-      }, Math.max(1250, 2300 - level * 55));
+      }, Math.max(1120, 2050 - level * 62));
     }
 
     if (level >= 3) {
       setTimer(() => {
         if (!gameRunning || isLevelChanging) return;
         createFloorZone(false);
-      }, Math.max(1700, 3000 - level * 45));
+      }, Math.max(1580, 2750 - level * 52));
     }
 
     if (level >= 4) {
       setTimer(() => {
         if (!gameRunning || isLevelChanging) return;
         createFloorZone(true);
-      }, Math.max(2200, 3600 - level * 50));
+      }, Math.max(2050, 3350 - level * 58));
     }
 
     if (level >= 5) {
       setTimer(() => {
         if (!gameRunning || isLevelChanging) return;
         createLaser();
-      }, Math.max(3200, 5600 - level * 75));
+      }, Math.max(2950, 5050 - level * 85));
     }
   }
 
@@ -232,7 +232,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function createSideAttack() {
     const fromLeft = Math.random() > 0.5;
-    const y = 150 + Math.random() * (gameArea.clientHeight - 220);
+    const warningHeight = 32;
+    const minY = 125;
+    const maxY = gameArea.clientHeight - 48;
+    let y;
+
+    // 하단에 붙어 있는 플레이를 막기 위해 좌우 패턴은 일정 확률로 플레이어의 현재 높이를 직접 겨냥합니다.
+    // 플레이어가 맨 밑에 있어도 warning → 좌우 공격이 들어오도록 보정했습니다.
+    if (Math.random() < 0.45) {
+      y = playerY + player.clientHeight / 2 - warningHeight / 2 + (Math.random() * 32 - 16);
+    } else {
+      y = minY + Math.random() * (maxY - minY);
+    }
+
+    y = Math.max(minY, Math.min(maxY, y));
 
     const warning = document.createElement('div');
     warning.className = `side-warning ${fromLeft ? 'left-side' : 'right-side'}`;
@@ -253,12 +266,12 @@ document.addEventListener('DOMContentLoaded', () => {
         element: pattern,
         x: fromLeft ? -40 : gameArea.clientWidth + 6,
         y,
-        vx: fromLeft ? 5.3 + level * 0.15 : -(5.3 + level * 0.15),
+        vx: fromLeft ? 5.75 + level * 0.17 : -(5.75 + level * 0.17),
         vy: 0,
         hit: false,
         removeOutside: true,
       });
-    }, 520, false);
+    }, 500, false);
   }
 
   function createFloorZone(isTracking) {
