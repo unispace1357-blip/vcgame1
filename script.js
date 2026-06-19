@@ -6,13 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const hpText = document.getElementById('hp');
   const scoreText = document.getElementById('score');
   const levelText = document.getElementById('level');
+  const swordCountText = document.getElementById('swordCount');
   const bossName = document.getElementById('bossName');
   const bossHpText = document.getElementById('bossHpText');
+  const bossMaxHpText = document.getElementById('bossMaxHpText');
   const bossHpBar = document.getElementById('bossHpBar');
   const clearEffect = document.getElementById('clearEffect');
 
   const MAX_HP = 2;
-  const BOSS_MAX_HP = 100;
+  const SWORD_DAMAGE = 8;
 
   let gameRunning = false;
   let isLevelChanging = false;
@@ -21,34 +23,61 @@ document.addEventListener('DOMContentLoaded', () => {
   let playerSpeed = 7;
   let hp = MAX_HP;
   let level = 1;
-  let bossHp = BOSS_MAX_HP;
   let score = 0;
+  let bossMaxHp = 200;
+  let bossHp = bossMaxHp;
   let keys = {};
-  let patterns = [];
-  let bossTimer = null;
-  let patternTimer = null;
-  let scoreTimer = null;
+  let hazards = [];
+  let swords = [];
+  let timers = [];
   let animationId = null;
 
+  function getSwordCount() {
+    return Math.min(level, 6);
+  }
+
+  function getBossMaxHp() {
+    const swordCount = getSwordCount();
+    return swordCount * 200 + Math.max(0, level - 1) * 15;
+  }
+
+  function getTopFallSpeed() {
+    return 4.8 + level * 0.18;
+  }
+
+  function setTimer(callback, delay, isInterval = true) {
+    const timer = isInterval ? setInterval(callback, delay) : setTimeout(callback, delay);
+    timers.push({ timer, isInterval });
+    return timer;
+  }
+
   function clearTimers() {
-    clearInterval(bossTimer);
-    clearInterval(patternTimer);
-    clearInterval(scoreTimer);
+    timers.forEach(({ timer, isInterval }) => {
+      if (isInterval) clearInterval(timer);
+      else clearTimeout(timer);
+    });
+    timers = [];
     cancelAnimationFrame(animationId);
   }
 
   function removeRaidObjects() {
-    document.querySelectorAll('.pattern, .warning-line').forEach((el) => el.remove());
-    patterns = [];
+    document
+      .querySelectorAll('.pattern, .warning-line, .side-warning, .floor-warning, .floor-blast, .tracking-warning, .tracking-blast, .laser-warning, .laser-beam, .sword-wave')
+      .forEach((el) => el.remove());
+    hazards = [];
+    swords = [];
   }
 
   function updateHud() {
+    const swordCount = getSwordCount();
     hpText.textContent = hp;
     scoreText.textContent = score;
     levelText.textContent = level;
+    swordCountText.textContent = swordCount;
     bossName.textContent = `LV.${level} 어둠의 마왕`;
     bossHpText.textContent = Math.max(0, Math.ceil(bossHp));
-    bossHpBar.style.width = `${Math.max(0, bossHp)}%`;
+    bossMaxHpText.textContent = bossMaxHp;
+    bossHpBar.style.width = `${Math.max(0, (bossHp / bossMaxHp) * 100)}%`;
   }
 
   function resetGame() {
@@ -58,16 +87,17 @@ document.addEventListener('DOMContentLoaded', () => {
     isLevelChanging = false;
     hp = MAX_HP;
     level = 1;
-    bossHp = BOSS_MAX_HP;
     score = 0;
+    bossMaxHp = getBossMaxHp();
+    bossHp = bossMaxHp;
     keys = {};
 
     playerX = gameArea.clientWidth / 2 - player.clientWidth / 2;
-    playerY = gameArea.clientHeight - player.clientHeight - 28;
+    playerY = gameArea.clientHeight - player.clientHeight - 30;
     player.style.left = `${playerX}px`;
     player.style.top = `${playerY}px`;
 
-    boss.classList.remove('boss-dead');
+    boss.classList.remove('boss-dead', 'boss-hit');
     clearEffect.classList.add('hidden');
     updateHud();
   }
@@ -81,43 +111,62 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startLevelTimers() {
-    clearInterval(bossTimer);
-    clearInterval(patternTimer);
-    clearInterval(scoreTimer);
+    clearTimers();
+    removeRaidObjects();
 
-    bossTimer = setInterval(() => {
+    setTimer(() => {
       if (!gameRunning || isLevelChanging) return;
-      const damagePerSecond = 4 + level * 0.45;
-      bossHp -= damagePerSecond;
-      updateHud();
+      createTopFalls(2);
+    }, Math.max(720, 1200 - level * 30));
 
-      if (bossHp <= 0) {
-        clearBoss();
-      }
-    }, 1000);
-
-    scoreTimer = setInterval(() => {
+    setTimer(() => {
       if (!gameRunning || isLevelChanging) return;
-      score += 10 + level * 3;
+      fireSwordWaves();
+    }, 850);
+
+    setTimer(() => {
+      if (!gameRunning || isLevelChanging) return;
+      score += 10 + level * 2;
       updateHud();
     }, 1000);
 
-    const interval = Math.max(360, 850 - level * 45);
-    patternTimer = setInterval(() => {
-      if (!gameRunning || isLevelChanging) return;
-      const count = Math.min(1 + Math.floor(level / 2), 5);
-      for (let i = 0; i < count; i += 1) {
-        setTimeout(createRaidPattern, i * 130);
-      }
-    }, interval);
+    if (level >= 2) {
+      setTimer(() => {
+        if (!gameRunning || isLevelChanging) return;
+        createSideAttack();
+      }, Math.max(1250, 2300 - level * 55));
+    }
+
+    if (level >= 3) {
+      setTimer(() => {
+        if (!gameRunning || isLevelChanging) return;
+        createFloorZone(false);
+      }, Math.max(1700, 3000 - level * 45));
+    }
+
+    if (level >= 4) {
+      setTimer(() => {
+        if (!gameRunning || isLevelChanging) return;
+        createFloorZone(true);
+      }, Math.max(2200, 3600 - level * 50));
+    }
+
+    if (level >= 5) {
+      setTimer(() => {
+        if (!gameRunning || isLevelChanging) return;
+        createLaser();
+      }, Math.max(3200, 5600 - level * 75));
+    }
   }
 
   function gameLoop() {
     if (!gameRunning) return;
 
     movePlayer();
-    movePatterns();
-    checkCollision();
+    moveHazards();
+    moveSwords();
+    checkPlayerCollision();
+    checkSwordCollision();
 
     animationId = requestAnimationFrame(gameLoop);
   }
@@ -130,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const maxX = gameArea.clientWidth - player.clientWidth;
     const maxY = gameArea.clientHeight - player.clientHeight;
-    const minY = 120;
+    const minY = 118;
 
     playerX = Math.max(0, Math.min(maxX, playerX));
     playerY = Math.max(minY, Math.min(maxY - 18, playerY));
@@ -138,9 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
     player.style.top = `${playerY}px`;
   }
 
-  function createRaidPattern() {
-    if (!gameRunning || isLevelChanging) return;
+  function createTopFalls(count) {
+    for (let i = 0; i < count; i += 1) {
+      setTimer(() => createTopFall(), i * 130, false);
+    }
+  }
 
+  function createTopFall() {
     const warningWidth = 56;
     const x = Math.random() * (gameArea.clientWidth - warningWidth);
 
@@ -149,65 +202,243 @@ document.addEventListener('DOMContentLoaded', () => {
     warning.style.left = `${x}px`;
     gameArea.appendChild(warning);
 
-    setTimeout(() => {
+    setTimer(() => {
+      warning.remove();
+      if (!gameRunning || isLevelChanging) return;
+
+      const pattern = document.createElement('div');
+      pattern.className = 'pattern falling-pattern';
+      pattern.style.left = `${x + 10}px`;
+      pattern.style.top = '0px';
+      gameArea.appendChild(pattern);
+
+      hazards.push({
+        element: pattern,
+        x: x + 10,
+        y: 0,
+        vx: 0,
+        vy: getTopFallSpeed() + Math.random() * 1.4,
+        hit: false,
+        removeOutside: true,
+      });
+    }, 430, false);
+  }
+
+  function createSideAttack() {
+    const fromLeft = Math.random() > 0.5;
+    const y = 150 + Math.random() * (gameArea.clientHeight - 220);
+
+    const warning = document.createElement('div');
+    warning.className = `side-warning ${fromLeft ? 'left-side' : 'right-side'}`;
+    warning.style.top = `${y}px`;
+    gameArea.appendChild(warning);
+
+    setTimer(() => {
+      warning.remove();
+      if (!gameRunning || isLevelChanging) return;
+
+      const pattern = document.createElement('div');
+      pattern.className = 'pattern side-pattern';
+      pattern.style.left = fromLeft ? '-40px' : `${gameArea.clientWidth + 6}px`;
+      pattern.style.top = `${y}px`;
+      gameArea.appendChild(pattern);
+
+      hazards.push({
+        element: pattern,
+        x: fromLeft ? -40 : gameArea.clientWidth + 6,
+        y,
+        vx: fromLeft ? 5.3 + level * 0.15 : -(5.3 + level * 0.15),
+        vy: 0,
+        hit: false,
+        removeOutside: true,
+      });
+    }, 520, false);
+  }
+
+  function createFloorZone(isTracking) {
+    const size = isTracking ? 94 : 86;
+    const x = isTracking
+      ? playerX + player.clientWidth / 2 - size / 2
+      : Math.random() * (gameArea.clientWidth - size);
+    const y = isTracking
+      ? playerY + player.clientHeight / 2 - size / 2
+      : 170 + Math.random() * (gameArea.clientHeight - 235);
+
+    const warning = document.createElement('div');
+    warning.className = isTracking ? 'tracking-warning' : 'floor-warning';
+    warning.style.left = `${Math.max(0, Math.min(gameArea.clientWidth - size, x))}px`;
+    warning.style.top = `${Math.max(120, Math.min(gameArea.clientHeight - size, y))}px`;
+    gameArea.appendChild(warning);
+
+    setTimer(() => {
       if (!gameRunning || isLevelChanging) {
         warning.remove();
         return;
       }
 
       warning.remove();
+      const blast = document.createElement('div');
+      blast.className = isTracking ? 'tracking-blast' : 'floor-blast';
+      blast.style.left = warning.style.left;
+      blast.style.top = warning.style.top;
+      gameArea.appendChild(blast);
 
-      const pattern = document.createElement('div');
-      pattern.className = 'pattern';
-      pattern.style.left = `${x + 10}px`;
-      pattern.style.top = '0px';
-      gameArea.appendChild(pattern);
+      const hazard = { element: blast, x: 0, y: 0, vx: 0, vy: 0, hit: false, removeOutside: false };
+      hazards.push(hazard);
 
-      patterns.push({
-        element: pattern,
-        y: 0,
-        speed: 4.5 + Math.random() * 2.5 + level * 0.25,
-        hit: false,
-      });
-    }, 430);
+      setTimer(() => {
+        blast.remove();
+        hazards = hazards.filter((item) => item !== hazard);
+      }, 420, false);
+    }, isTracking ? 720 : 850, false);
   }
 
-  function movePatterns() {
-    for (let i = patterns.length - 1; i >= 0; i -= 1) {
-      const pattern = patterns[i];
-      pattern.y += pattern.speed;
-      pattern.element.style.top = `${pattern.y}px`;
+  function createLaser() {
+    const y = 150 + Math.random() * (gameArea.clientHeight - 250);
 
-      if (pattern.y > gameArea.clientHeight) {
-        pattern.element.remove();
-        patterns.splice(i, 1);
+    const warning = document.createElement('div');
+    warning.className = 'laser-warning';
+    warning.style.top = `${y}px`;
+    gameArea.appendChild(warning);
+
+    setTimer(() => {
+      if (!gameRunning || isLevelChanging) {
+        warning.remove();
+        return;
+      }
+
+      warning.remove();
+      const laser = document.createElement('div');
+      laser.className = 'laser-beam';
+      laser.style.top = `${y}px`;
+      gameArea.appendChild(laser);
+
+      const hazard = { element: laser, x: 0, y: 0, vx: 0, vy: 0, hit: false, removeOutside: false };
+      hazards.push(hazard);
+
+      setTimer(() => {
+        laser.remove();
+        hazards = hazards.filter((item) => item !== hazard);
+      }, 520, false);
+    }, 820, false);
+  }
+
+  function fireSwordWaves() {
+    const count = getSwordCount();
+    const startX = playerX + player.clientWidth / 2;
+    const spacing = 18;
+    const firstOffset = -((count - 1) * spacing) / 2;
+
+    for (let i = 0; i < count; i += 1) {
+      const sword = document.createElement('div');
+      sword.className = 'sword-wave';
+      const x = startX + firstOffset + i * spacing - 5;
+      const y = playerY - 22;
+      sword.style.left = `${x}px`;
+      sword.style.top = `${y}px`;
+      gameArea.appendChild(sword);
+
+      swords.push({ element: sword, x, y, vy: -(8.5 + level * 0.08), hit: false });
+    }
+  }
+
+  function moveHazards() {
+    for (let i = hazards.length - 1; i >= 0; i -= 1) {
+      const hazard = hazards[i];
+      hazard.x += hazard.vx;
+      hazard.y += hazard.vy;
+
+      if (hazard.vx !== 0 || hazard.vy !== 0) {
+        hazard.element.style.left = `${hazard.x}px`;
+        hazard.element.style.top = `${hazard.y}px`;
+      }
+
+      const out =
+        hazard.x < -90 ||
+        hazard.x > gameArea.clientWidth + 90 ||
+        hazard.y < -90 ||
+        hazard.y > gameArea.clientHeight + 90;
+
+      if (hazard.removeOutside && out) {
+        hazard.element.remove();
+        hazards.splice(i, 1);
       }
     }
   }
 
-  function checkCollision() {
+  function moveSwords() {
+    for (let i = swords.length - 1; i >= 0; i -= 1) {
+      const sword = swords[i];
+      sword.y += sword.vy;
+      sword.element.style.top = `${sword.y}px`;
+
+      if (sword.y < -40) {
+        sword.element.remove();
+        swords.splice(i, 1);
+      }
+    }
+  }
+
+  function isColliding(rectA, rectB) {
+    return (
+      rectA.left < rectB.right &&
+      rectA.right > rectB.left &&
+      rectA.top < rectB.bottom &&
+      rectA.bottom > rectB.top
+    );
+  }
+
+  function damagePlayer(hazard) {
+    if (hazard.hit || isLevelChanging) return;
+    hazard.hit = true;
+    hp -= 1;
+    updateHud();
+    player.classList.add('damaged');
+    setTimer(() => player.classList.remove('damaged'), 240, false);
+
+    if (hazard.removeOutside) {
+      hazard.element.remove();
+      hazards = hazards.filter((item) => item !== hazard);
+    }
+
+    if (hp <= 0) endGame();
+  }
+
+  function checkPlayerCollision() {
     const playerRect = player.getBoundingClientRect();
 
-    for (let i = patterns.length - 1; i >= 0; i -= 1) {
-      const pattern = patterns[i];
-      const patternRect = pattern.element.getBoundingClientRect();
+    hazards.forEach((hazard) => {
+      if (hazard.hit) return;
+      const hazardRect = hazard.element.getBoundingClientRect();
+      if (isColliding(playerRect, hazardRect)) {
+        damagePlayer(hazard);
+      }
+    });
+  }
 
-      const isHit =
-        playerRect.left < patternRect.right &&
-        playerRect.right > patternRect.left &&
-        playerRect.top < patternRect.bottom &&
-        playerRect.bottom > patternRect.top;
+  function checkSwordCollision() {
+    if (isLevelChanging) return;
+    const bossRect = boss.getBoundingClientRect();
 
-      if (isHit && !pattern.hit) {
-        pattern.hit = true;
-        hp -= 1;
+    for (let i = swords.length - 1; i >= 0; i -= 1) {
+      const sword = swords[i];
+      if (sword.hit) continue;
+
+      const swordRect = sword.element.getBoundingClientRect();
+      if (isColliding(swordRect, bossRect)) {
+        sword.hit = true;
+        sword.element.remove();
+        swords.splice(i, 1);
+        bossHp -= SWORD_DAMAGE;
+        score += 3 + level;
+        boss.classList.add('boss-hit');
+        setTimer(() => boss.classList.remove('boss-hit'), 110, false);
         updateHud();
-        pattern.element.remove();
-        patterns.splice(i, 1);
-        player.classList.add('damaged');
-        setTimeout(() => player.classList.remove('damaged'), 220);
 
-        if (hp <= 0) endGame();
+        if (bossHp <= 0) {
+          clearBoss();
+          break;
+        }
       }
     }
   }
@@ -216,25 +447,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isLevelChanging) return;
     isLevelChanging = true;
     bossHp = 0;
-    score += 500 + level * 100;
+    score += 500 + level * 120;
     updateHud();
+    clearTimers();
     removeRaidObjects();
 
     boss.classList.add('boss-dead');
     clearEffect.classList.remove('hidden');
     clearEffect.textContent = `LEVEL ${level} BOSS CLEAR!`;
 
-    setTimeout(() => {
+    setTimer(() => {
       if (!gameRunning) return;
       level += 1;
-      bossHp = BOSS_MAX_HP;
+      bossMaxHp = getBossMaxHp();
+      bossHp = bossMaxHp;
       hp = Math.min(MAX_HP, hp + 1);
       isLevelChanging = false;
       boss.classList.remove('boss-dead');
       clearEffect.classList.add('hidden');
       updateHud();
       startLevelTimers();
-    }, 1800);
+    }, 1800, false);
   }
 
   function endGame() {
