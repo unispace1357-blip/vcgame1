@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function removeRaidObjects() {
     document
-      .querySelectorAll('.pattern, .warning-line, .side-warning, .floor-warning, .floor-blast, .tracking-warning, .tracking-blast, .laser-warning, .laser-beam, .sword-wave')
+      .querySelectorAll('.pattern, .warning-line, .side-warning, .floor-warning, .floor-blast, .tracking-warning, .tracking-blast, .laser-warning, .laser-beam, .sword-wave, .damage-text, .boss-explosion')
       .forEach((el) => el.remove());
     hazards = [];
     swords = [];
@@ -325,20 +325,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function fireSwordWaves() {
     const count = getSwordCount();
+    const areaRect = gameArea.getBoundingClientRect();
+    const bossRect = boss.getBoundingClientRect();
+    const targetBaseX = bossRect.left - areaRect.left + bossRect.width / 2;
+    const targetBaseY = bossRect.top - areaRect.top + bossRect.height / 2;
     const startX = playerX + player.clientWidth / 2;
+    const startY = playerY - 18;
     const spacing = 18;
     const firstOffset = -((count - 1) * spacing) / 2;
 
     for (let i = 0; i < count; i += 1) {
       const sword = document.createElement('div');
-      sword.className = 'sword-wave';
+      sword.className = 'sword-wave homing-sword';
+
       const x = startX + firstOffset + i * spacing - 5;
-      const y = playerY - 22;
+      const y = startY;
+      const targetX = targetBaseX + firstOffset + i * spacing;
+      const targetY = targetBaseY;
+      const dx = targetX - x;
+      const dy = targetY - y;
+      const distance = Math.max(Math.hypot(dx, dy), 1);
+      const speed = 9.5 + level * 0.08;
+      const vx = (dx / distance) * speed;
+      const vy = (dy / distance) * speed;
+      const rotateDeg = Math.atan2(vy, vx) * (180 / Math.PI) + 90;
+
       sword.style.left = `${x}px`;
       sword.style.top = `${y}px`;
+      sword.style.transform = `rotate(${rotateDeg}deg)`;
       gameArea.appendChild(sword);
 
-      swords.push({ element: sword, x, y, vy: -(8.5 + level * 0.08), hit: false });
+      swords.push({ element: sword, x, y, vx, vy, hit: false });
     }
   }
 
@@ -369,10 +386,18 @@ document.addEventListener('DOMContentLoaded', () => {
   function moveSwords() {
     for (let i = swords.length - 1; i >= 0; i -= 1) {
       const sword = swords[i];
+      sword.x += sword.vx;
       sword.y += sword.vy;
+      sword.element.style.left = `${sword.x}px`;
       sword.element.style.top = `${sword.y}px`;
 
-      if (sword.y < -40) {
+      const out =
+        sword.x < -80 ||
+        sword.x > gameArea.clientWidth + 80 ||
+        sword.y < -80 ||
+        sword.y > gameArea.clientHeight + 80;
+
+      if (out) {
         sword.element.remove();
         swords.splice(i, 1);
       }
@@ -416,6 +441,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function showDamageText(amount) {
+    const areaRect = gameArea.getBoundingClientRect();
+    const bossRect = boss.getBoundingClientRect();
+    const damageText = document.createElement('div');
+    damageText.className = 'damage-text';
+    damageText.textContent = `-${amount}`;
+    damageText.style.left = `${bossRect.left - areaRect.left + bossRect.width / 2}px`;
+    damageText.style.top = `${bossRect.top - areaRect.top + 6}px`;
+    gameArea.appendChild(damageText);
+
+    setTimer(() => damageText.remove(), 650, false);
+  }
+
+  function showBossExplosion() {
+    const areaRect = gameArea.getBoundingClientRect();
+    const bossRect = boss.getBoundingClientRect();
+    const explosion = document.createElement('div');
+    explosion.className = 'boss-explosion';
+    explosion.textContent = '✦';
+    explosion.style.left = `${bossRect.left - areaRect.left + bossRect.width / 2}px`;
+    explosion.style.top = `${bossRect.top - areaRect.top + bossRect.height / 2}px`;
+    gameArea.appendChild(explosion);
+
+    setTimer(() => explosion.remove(), 900, false);
+  }
+
   function checkSwordCollision() {
     if (isLevelChanging) return;
     const bossRect = boss.getBoundingClientRect();
@@ -431,8 +482,9 @@ document.addEventListener('DOMContentLoaded', () => {
         swords.splice(i, 1);
         bossHp -= SWORD_DAMAGE;
         score += 3 + level;
+        showDamageText(SWORD_DAMAGE);
         boss.classList.add('boss-hit');
-        setTimer(() => boss.classList.remove('boss-hit'), 110, false);
+        setTimer(() => boss.classList.remove('boss-hit'), 180, false);
         updateHud();
 
         if (bossHp <= 0) {
@@ -452,6 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimers();
     removeRaidObjects();
 
+    showBossExplosion();
     boss.classList.add('boss-dead');
     clearEffect.classList.remove('hidden');
     clearEffect.textContent = `LEVEL ${level} BOSS CLEAR!`;
@@ -462,12 +515,18 @@ document.addEventListener('DOMContentLoaded', () => {
       bossMaxHp = getBossMaxHp();
       bossHp = bossMaxHp;
       hp = Math.min(MAX_HP, hp + 1);
+      updateHud();
+      clearEffect.textContent = `LEVEL ${level} START!`;
+    }, 1200, false);
+
+    setTimer(() => {
+      if (!gameRunning) return;
       isLevelChanging = false;
       boss.classList.remove('boss-dead');
       clearEffect.classList.add('hidden');
       updateHud();
       startLevelTimers();
-    }, 1800, false);
+    }, 2100, false);
   }
 
   function endGame() {

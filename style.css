@@ -182,7 +182,7 @@ h1 {
 }
 
 .boss-hit {
-  filter: brightness(1.8);
+  animation: bossHit 0.18s ease;
 }
 
 .boss-dead {
@@ -408,7 +408,68 @@ h1 {
   background: linear-gradient(#ffffff, #8fd6ff);
   clip-path: polygon(50% 0, 100% 24%, 62% 100%, 38% 100%, 0 24%);
   box-shadow: 0 0 12px rgba(143, 214, 255, 0.9);
+  transform-origin: 50% 50%;
   z-index: 4;
+}
+
+.homing-sword::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -12px;
+  width: 4px;
+  height: 14px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(143, 214, 255, 0.45);
+  filter: blur(1px);
+}
+
+.damage-text {
+  position: absolute;
+  transform: translateX(-50%);
+  color: #ffef92;
+  font-size: 22px;
+  font-weight: 900;
+  text-shadow: 0 0 8px rgba(255, 0, 0, 0.85);
+  pointer-events: none;
+  z-index: 8;
+  animation: damageFloat 0.65s ease-out forwards;
+}
+
+.boss-explosion {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  color: #fff7c7;
+  font-size: 76px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(255, 206, 82, 0.75) 22%, rgba(255, 35, 35, 0.8) 50%, rgba(130, 0, 0, 0) 72%);
+  box-shadow: 0 0 42px rgba(255, 40, 40, 0.95);
+  pointer-events: none;
+  z-index: 7;
+  animation: bossExplosion 0.9s ease-out forwards;
+}
+
+@keyframes bossHit {
+  0% { filter: brightness(1); transform: translateX(-50%) scale(1); }
+  35% { filter: brightness(2.2); transform: translateX(calc(-50% - 6px)) scale(1.04); }
+  70% { filter: brightness(1.65); transform: translateX(calc(-50% + 5px)) scale(1.02); }
+  100% { filter: brightness(1); transform: translateX(-50%) scale(1); }
+}
+
+@keyframes damageFloat {
+  from { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -38px) scale(1.18); }
+}
+
+@keyframes bossExplosion {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(0.55) rotate(0deg); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(1.55) rotate(24deg); }
 }
 
 @keyframes warningBlink {
