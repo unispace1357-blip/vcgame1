@@ -1,0 +1,62 @@
+Track: Bossroom Battle
+Creator: BackgroundMusicMaster
+Source: https://pixabay.com/music/main-title-bossroom-battle-431358/
+License: Pixabay Content License
+License summary: https://pixabay.com/service/license-summary/
+Downloaded: 2026-06-22
+
+This audio is embedded as background music in Abyss Raid: Trial of the Demon King.
+
+Sound effect: Space Slash
+Creator: Driken5482
+Source: https://pixabay.com/sound-effects/film-special-effects-space-slash-236689/
+License: Pixabay Content License
+
+This audio is embedded as the sword-wave launch sound effect.
+
+Sound effect: Impact Thud
+Creator: DRAGON-STUDIO
+Source: https://pixabay.com/sound-effects/impact-thud-372473/
+License: Pixabay Content License
+
+This audio is embedded as the boss hit sound effect.
+
+Sound effect: male_hurt7
+Creator: micahlg (Freesound)
+Source: https://pixabay.com/sound-effects/male-hurt7-48124/
+License: Pixabay Content License
+
+This audio is embedded as the player hit sound effect.
+
+Sound effect: Short Fireball Woosh
+Source: https://pixabay.com/sound-effects/short-fireball-woosh-6146/
+License: Pixabay Content License
+
+This audio is embedded as the meteor fall sound effect.
+
+Sound effect: Epic Spell Impact
+Source: https://pixabay.com/sound-effects/film-special-effects-epic-spell-impact-478364/
+License: Pixabay Content License
+
+This audio is embedded as the floor-zone explosion sound effect.
+
+Sound effect: Sci-Fi Charge Up
+Creator: Hemplock (Freesound)
+Source: https://pixabay.com/sound-effects/sci-fi-charge-up-37395/
+License: Pixabay Content License
+
+This audio is embedded as the laser warning sound effect.
+
+Sound effect: Sci-Fi Weapon Laser Shot 04
+Creator: DavidDumaisAudio
+Source: https://pixabay.com/sound-effects/film-special-effects-sci-fi-weapon-laser-shot-04-316416/
+License: Pixabay Content License
+
+This audio is embedded as the laser firing sound effect.
+
+Sound effect: Monster Scream Death
+Creator: DangAdv64 (Freesound)
+Source: https://pixabay.com/sound-effects/monster-scream-death-101123/
+License: Pixabay Content License
+
+This audio is embedded as the boss defeat voice effect.
