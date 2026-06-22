@@ -1466,7 +1466,7 @@ document.addEventListener('DOMContentLoaded', () => {
     floorBlastSfx.volume = isMuted ? 0 : Math.min(1, sfxVolume * 0.3);
     laserChargeSfx.volume = isMuted ? 0 : Math.min(1, sfxVolume * 0.22);
     laserShotSfx.volume = isMuted ? 0 : Math.min(1, sfxVolume * 0.28);
-    monsterScreamSfx.volume = isMuted ? 0 : Math.min(1, sfxVolume * 0.36);
+    monsterScreamSfx.volume = isMuted ? 0 : Math.min(1, sfxVolume * 0.15);
     if (muteBtn) muteBtn.textContent = isMuted ? '음소거 ON' : '음소거 OFF';
 
     if (shouldSave) saveAudioSettings();

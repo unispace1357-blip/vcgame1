@@ -54,9 +54,9 @@ License: Pixabay Content License
 
 This audio is embedded as the laser firing sound effect.
 
-Sound effect: Monster Scream Death
-Creator: DangAdv64 (Freesound)
-Source: https://pixabay.com/sound-effects/monster-scream-death-101123/
+Sound effect: Monster roar PS O24
+Creator: AudioPapkin
+Source: https://pixabay.com/sound-effects/monster-roar-ps-o24-333057/
 License: Pixabay Content License
 
 This audio is embedded as the boss defeat voice effect.
