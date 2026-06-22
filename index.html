@@ -2,7 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#8d2424" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
   <title>어비스 레이드: 마왕의 시험</title>
   <style>
 * {
@@ -201,7 +204,7 @@ h1 {
   height: 128px;
   max-width: none;
   object-fit: contain;
-  image-rendering: pixelated;
+  image-rendering: auto;
   pointer-events: none;
   filter: drop-shadow(0 0 12px rgba(255, 43, 43, 0.65));
 }
@@ -765,6 +768,571 @@ button:hover {
   display: none;
 }
 
+.lobby-screen {
+  width: min(900px, 100vw);
+  height: min(900px, 100dvh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #0b090a;
+  border: 1px solid rgba(255, 206, 82, 0.28);
+  box-shadow: 0 0 36px rgba(0, 0, 0, 0.55);
+}
+
+.lobby-topbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 206, 82, 0.18);
+  background: #160b0d;
+}
+
+.lobby-brand h1 {
+  margin: 0;
+  font-size: 23px;
+}
+
+.lobby-brand p {
+  margin-bottom: 3px;
+  color: #b8b8b8;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.resource-bar {
+  display: flex;
+  gap: 8px;
+}
+
+.resource-chip {
+  min-width: 104px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 206, 82, 0.22);
+  border-radius: 8px;
+  background: #090909;
+  color: #d7d7d7;
+  font-size: 12px;
+  text-align: right;
+}
+
+.resource-chip strong {
+  display: block;
+  margin-top: 2px;
+  color: #ffce52;
+  font-size: 15px;
+}
+
+.lobby-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 16px 18px 12px;
+}
+
+.hero-summary {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255, 206, 82, 0.24);
+  border-radius: 8px;
+  background: #110c0d;
+}
+
+.hero-portrait {
+  position: relative;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hero-portrait::after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 18px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.58);
+  filter: blur(4px);
+}
+
+.hero-portrait img {
+  position: relative;
+  z-index: 1;
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 14px rgba(74, 163, 255, 0.52));
+}
+
+.hero-role {
+  color: #ffce52;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.hero-details h2 {
+  margin: 4px 0 12px;
+  font-size: 28px;
+}
+
+.hero-level-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+  font-size: 13px;
+}
+
+.hero-level-row strong,
+.combat-power strong {
+  color: #ffce52;
+}
+
+.exp-bar {
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: #080808;
+}
+
+.exp-fill {
+  width: 0%;
+  height: 100%;
+  background: #3477d4;
+  transition: width 0.2s ease;
+}
+
+.combat-power {
+  margin-top: 13px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #c5c5c5;
+  font-size: 13px;
+}
+
+.combat-power strong {
+  float: right;
+  font-size: 20px;
+}
+
+.lobby-panel {
+  display: none;
+}
+
+.lobby-panel.active {
+  display: block;
+}
+
+.panel-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.panel-title h3 {
+  color: #ffce52;
+  font-size: 18px;
+}
+
+.panel-title span {
+  color: #9f9f9f;
+  font-size: 12px;
+}
+
+.stat-grid,
+.equipment-grid,
+.shop-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.stat-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stat-item,
+.equipment-slot,
+.shop-slot {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: #121011;
+}
+
+.stat-item span,
+.equipment-slot span,
+.shop-slot span {
+  display: block;
+  margin-bottom: 5px;
+  color: #a7a7a7;
+  font-size: 11px;
+}
+
+.stat-item strong,
+.equipment-slot strong,
+.shop-slot strong {
+  color: #f4f4f4;
+  font-size: 16px;
+}
+
+.equipment-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.shop-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.equipment-slot,
+.shop-slot {
+  min-height: 92px;
+}
+
+.equipment-slot.equipped {
+  border-color: rgba(74, 163, 255, 0.48);
+}
+
+.equipment-slot strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.equipment-tier-common { color: #e8e8e8 !important; }
+.equipment-tier-rare { color: #4aa3ff !important; }
+.equipment-tier-epic { color: #bd6cff !important; }
+.equipment-tier-legendary { color: #ff525f !important; }
+
+.inventory-heading {
+  margin: 14px 0 8px;
+  color: #cfcfcf;
+  font-size: 13px;
+}
+
+.equipment-inventory {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.inventory-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  background: #0e0c0d;
+}
+
+.inventory-actions {
+  display: grid;
+  gap: 5px;
+  min-width: 108px;
+}
+
+.inventory-item p {
+  margin-top: 4px;
+  color: #999;
+  font-size: 11px;
+}
+
+.inventory-item button {
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.equipment-notice {
+  min-height: 18px;
+  margin-top: 10px;
+  color: #ffce52;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.inventory-item button:disabled {
+  cursor: default;
+  opacity: 0.45;
+  transform: none;
+}
+
+.slot-level,
+.shop-price {
+  margin-top: 9px;
+  color: #ffce52;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.empty-slot {
+  color: #777 !important;
+}
+
+.shop-slot button {
+  width: 100%;
+  margin-top: 9px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.shop-slot button:disabled {
+  cursor: default;
+  opacity: 0.45;
+  transform: none;
+}
+
+.shop-detail {
+  margin-top: 7px;
+  color: #999;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.shop-notice {
+  min-height: 20px;
+  margin-top: 10px;
+  color: #ffce52;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.rotating-shop-header {
+  margin-top: 16px;
+}
+
+.rotating-shop-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.shop-slot.sold-out {
+  opacity: 0.58;
+}
+
+.shop-item-meta {
+  margin-top: 5px;
+  color: #b8b8b8;
+  font-size: 11px;
+}
+
+.lobby-footer {
+  flex: 0 0 auto;
+  padding: 10px 14px max(10px, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(255, 206, 82, 0.18);
+  background: #0a0809;
+}
+
+.lobby-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pet-card {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: #121011;
+}
+
+.pet-card.equipped {
+  border-color: rgba(255, 206, 82, 0.55);
+}
+
+.pet-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 8px;
+  place-items: center;
+  border-radius: 50%;
+  background: #2a1b1d;
+  color: #ffce52;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.pet-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pet-card p {
+  margin-top: 5px;
+  color: #aaa;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.pet-exp-bar {
+  height: 7px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #080808;
+}
+
+.pet-exp-fill {
+  height: 100%;
+  background: #ffce52;
+}
+
+.pet-card button,
+.pet-contract button {
+  width: 100%;
+  margin-top: 9px;
+  padding: 7px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.pet-contract {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid rgba(255, 206, 82, 0.2);
+  border-radius: 8px;
+  background: #0e0c0d;
+  text-align: center;
+}
+
+.pet-contract p,
+.pet-notice {
+  margin-top: 5px;
+  color: #aaa;
+  font-size: 11px;
+}
+
+.pet-notice {
+  min-height: 18px;
+  color: #ffce52;
+  font-weight: 800;
+}
+
+#player.pet-shield {
+  filter: drop-shadow(0 0 10px #66d9ff) drop-shadow(0 0 4px #fff);
+}
+
+#player.shield-block {
+  filter: drop-shadow(0 0 16px #fff) drop-shadow(0 0 8px #66d9ff);
+}
+
+.shield-break-effect {
+  position: absolute;
+  z-index: 7;
+  width: 78px;
+  height: 78px;
+  border: 4px solid rgba(160, 238, 255, 0.95);
+  border-radius: 50%;
+  box-shadow: 0 0 18px #66d9ff, inset 0 0 14px rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.35);
+  animation: shieldBreak 0.42s ease-out forwards;
+}
+
+@keyframes shieldBreak {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.35); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+}
+
+.pet-companion {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 0;
+  background: none;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+.pet-companion img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.72));
+}
+
+.pet-companion.attack,
+.pet-companion.shield,
+.pet-companion.gold {
+  box-shadow: none;
+}
+
+.pet-projectile {
+  position: absolute;
+  z-index: 4;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ffd27a;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff7bd 0 18%, #ff9f32 38%, #e93619 65%, rgba(80, 0, 0, 0) 72%);
+  box-shadow: 0 0 10px #ff8128, 0 0 18px rgba(255, 60, 15, 0.72);
+  pointer-events: none;
+}
+
+.lobby-tab {
+  padding: 9px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: #171415;
+  box-shadow: none;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.lobby-tab.active {
+  border-color: rgba(255, 206, 82, 0.52);
+  color: #ffce52;
+  background: #24191a;
+}
+
+.battle-entry-btn {
+  width: 100%;
+  padding: 13px 18px;
+  border-radius: 8px;
+  font-size: 17px;
+}
+
+.battle-screen {
+  width: 100%;
+  min-height: 100dvh;
+}
+
+.battle-screen .game-wrap {
+  margin: 0 auto;
+}
+
 @media (max-width: 700px) {
   body {
     min-height: 100dvh;
@@ -772,6 +1340,90 @@ button:hover {
     padding: 0;
     overflow: hidden;
     overscroll-behavior: none;
+  }
+
+  .lobby-screen {
+    width: 100%;
+    height: 100dvh;
+    border: 0;
+  }
+
+  .battle-screen {
+    height: 100dvh;
+  }
+
+  .lobby-topbar {
+    padding: max(10px, env(safe-area-inset-top)) 10px 9px;
+  }
+
+  .lobby-brand h1 {
+    font-size: 18px;
+  }
+
+  .lobby-brand p {
+    font-size: 9px;
+  }
+
+  .resource-chip {
+    min-width: 72px;
+    padding: 6px 7px;
+    font-size: 9px;
+  }
+
+  .resource-chip strong {
+    font-size: 12px;
+  }
+
+  .lobby-content {
+    padding: 10px;
+  }
+
+  .hero-summary {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .hero-portrait {
+    min-height: 130px;
+  }
+
+  .hero-portrait img {
+    width: 92px;
+    height: 92px;
+  }
+
+  .hero-details h2 {
+    margin-bottom: 8px;
+    font-size: 21px;
+  }
+
+  .combat-power {
+    margin-top: 9px;
+    padding-top: 8px;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .equipment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .shop-grid,
+  .equipment-inventory,
+  .pet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-item {
+    grid-template-columns: minmax(0, 1fr) 104px;
+  }
+
+  .equipment-slot,
+  .shop-slot {
+    min-height: 72px;
   }
 
   .game-wrap {
@@ -957,10 +1609,25 @@ button:hover {
 }
 
 .rank-name {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 700;
+}
+
+.rank-name-wrap {
+  min-width: 0;
+}
+
+.rank-name-wrap small {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: #999;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rank-level {
@@ -1039,6 +1706,16 @@ button:hover {
   font-size: 15px;
 }
 
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.result-actions button {
+  min-width: 132px;
+}
+
 .ranking-save-area p,
 .rank-save-done {
   color: #bfbfbf;
@@ -1099,6 +1776,123 @@ button:hover {
   </style>
 </head>
 <body>
+  <section id="lobbyScreen" class="lobby-screen" aria-label="게임 로비">
+    <header class="lobby-topbar">
+      <div class="lobby-brand">
+        <p>ABYSS RAID</p>
+        <h1>마왕의 시험</h1>
+      </div>
+      <div class="resource-bar" aria-label="보유 재화">
+        <div class="resource-chip">골드<strong id="lobbyGold">0</strong></div>
+        <div class="resource-chip">강화석<strong id="lobbyStones">0</strong></div>
+      </div>
+    </header>
+
+    <div class="lobby-content">
+      <section class="hero-summary" aria-label="기사 성장 상태">
+        <div class="hero-portrait">
+          <img src="./asset/knight.png" alt="심연 기사" draggable="false" />
+        </div>
+        <div class="hero-details">
+          <p class="hero-role">ABYSS KNIGHT</p>
+          <h2>심연 기사</h2>
+          <div class="hero-level-row">
+            <strong>기사 LV.<span id="lobbyPlayerLevel">1</span> / <span id="lobbyMaxLevel">50</span></strong>
+            <span>EXP <span id="lobbyExp">0</span> / <span id="lobbyExpMax">100</span></span>
+          </div>
+          <div class="exp-bar" aria-label="기사 경험치">
+            <div id="lobbyExpFill" class="exp-fill"></div>
+          </div>
+          <div class="combat-power">전투력 <strong id="lobbyPower">100</strong></div>
+        </div>
+      </section>
+
+      <section id="growthPanel" class="lobby-panel active" data-panel="growth">
+        <div class="panel-title">
+          <h3>성장 현황</h3>
+          <span>기사의 기본 능력치</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item"><span>공격력</span><strong id="lobbyAttack">8</strong></div>
+          <div class="stat-item"><span>최대 HP</span><strong id="lobbyMaxHp">2</strong></div>
+          <div class="stat-item"><span>치명타율</span><strong><span id="lobbyCriticalRate">5</span>%</strong></div>
+          <div class="stat-item"><span>동시 검기</span><strong id="lobbySwordCount">1</strong></div>
+        </div>
+      </section>
+
+      <section id="equipmentPanel" class="lobby-panel" data-panel="equipment">
+        <div class="panel-title">
+          <h3>장착 장비</h3>
+          <span>4개 슬롯</span>
+        </div>
+        <div id="equippedSlots" class="equipment-grid"></div>
+        <h4 class="inventory-heading">보유 장비</h4>
+        <div id="equipmentInventory" class="equipment-inventory"></div>
+        <p id="equipmentNotice" class="equipment-notice" aria-live="polite"></p>
+      </section>
+
+      <section id="shopPanel" class="lobby-panel" data-panel="shop">
+        <div class="panel-title">
+          <h3>상점</h3>
+          <span>장비 보급</span>
+        </div>
+        <div class="shop-grid">
+          <div class="shop-slot">
+            <span>장비 상자</span>
+            <strong>심연 장비 상자</strong>
+            <p id="equipmentChestPrice" class="shop-price">500 골드</p>
+            <p class="shop-detail">커먼 60% · 레어 30%<br />에픽 9% · 레전더리 1%</p>
+            <button id="openEquipmentChestBtn" type="button">상자 열기</button>
+            <p class="shop-detail">보유 무료 상자: <strong id="freeEquipmentChests">0</strong>개</p>
+          </div>
+          <div class="shop-slot">
+            <span>레전더리 천장</span>
+            <strong><span id="equipmentChestPity">0</span> / 30</strong>
+            <p class="shop-price">Lv.40 상자 30번째 확정</p>
+            <p class="shop-detail">플레이어 Lv.40부터 누적되며 레전더리 획득 시 초기화됩니다.</p>
+          </div>
+          <div class="shop-slot">
+            <span>중복 장비 변환</span>
+            <strong>강화석 환급</strong>
+            <p class="shop-price">커먼 1 · 레어 3 · 에픽 8 · 레전더리 20</p>
+            <p class="shop-detail">이미 보유한 장비는 자동으로 강화석으로 변환됩니다.</p>
+          </div>
+        </div>
+        <div class="panel-title rotating-shop-header">
+          <h3>전투 보급품</h3>
+          <span id="shopRefreshStatus">3판 후 상품 갱신</span>
+        </div>
+        <div id="rotatingShopGrid" class="shop-grid rotating-shop-grid"></div>
+        <p id="shopNotice" class="shop-notice" aria-live="polite"></p>
+      </section>
+
+      <section id="petPanel" class="lobby-panel" data-panel="pet">
+        <div class="panel-title">
+          <h3>동행 펫</h3>
+          <span>장착 가능 1마리 · 최대 LV.5</span>
+        </div>
+        <div id="petGrid" class="pet-grid"></div>
+        <div class="pet-contract">
+          <strong>펫 해금 조건</strong>
+          <p>아르: 보스 5단계 클리어 · 루메: 기사 Lv.10 · 모라: 장비 10개 분해</p>
+          <p>펫 경험치는 한 판에서 보스 3마리 이상 처치했을 때 종료 시 정산됩니다.</p>
+          <p id="petNotice" class="pet-notice" aria-live="polite"></p>
+        </div>
+      </section>
+    </div>
+
+    <footer class="lobby-footer">
+      <nav class="lobby-tabs" aria-label="로비 메뉴">
+        <button class="lobby-tab active" type="button" data-lobby-tab="growth">성장</button>
+        <button class="lobby-tab" type="button" data-lobby-tab="equipment">장비</button>
+        <button class="lobby-tab" type="button" data-lobby-tab="pet">펫</button>
+        <button class="lobby-tab" type="button" data-lobby-tab="shop">상점</button>
+      </nav>
+      <button id="enterBattleBtn" class="battle-entry-btn" type="button">심연의 마왕에게 도전</button>
+    </footer>
+  </section>
+
+  <section id="battleScreen" class="battle-screen hidden" aria-label="전투 화면">
   <div class="game-wrap">
     <header class="top-area">
       <div>
@@ -1142,31 +1936,14 @@ button:hover {
       <div class="arena-glow"></div>
 
       <div id="boss" class="boss demon-boss" aria-label="심연의 마왕">
-        <img class="boss-art" src="./asset/demon_boss.png" alt="" draggable="false" />
+        <img class="boss-art" src="./asset/bosses/optimized/stage01_abyss_slime.webp" alt="" draggable="false" />
       </div>
 
       <div id="clearEffect" class="clear-effect hidden">BOSS CLEAR!</div>
       <div id="player" class="player knight"></div>
+      <div id="petCompanion" class="pet-companion hidden" aria-label="동행 펫"></div>
 
-      <div id="message" class="message">
-        <div class="start-card">
-          <p class="raid-label">RAID READY</p>
-          <h2>마왕의 시험</h2>
-          <p class="desc">심연의 마왕은 레벨이 오를수록 더 강한 패턴을 사용합니다.<br />기사는 자동 유도 검기로 공격하고, 플레이어는 붉은 워닝 사인을 피해 생존하세요.<br />레벨 클리어 시 HP가 1 회복됩니다.</p>
-
-          <div class="rule-list">
-            <span>LV1: 상단 낙하 공격</span>
-            <span>LV2: 좌우 공격 추가</span>
-            <span>LV3+: 장판·추적·레이저</span>
-            <span>메테오: 상단·좌우 공격</span>
-            <span>랭킹: 사망 후 닉네임 저장</span>
-            <span>TOP3: 금·은·동 메달</span>
-          </div>
-
-          <button id="startBtn" type="button">게임 시작</button>
-          <p class="sub-text">WASD / 방향키 이동 · 스페이스바 시작</p>
-        </div>
-      </div>
+      <div id="message" class="message hidden"></div>
     </main>
 
     <section class="touch-controls" aria-label="모바일 이동 조작">
@@ -1186,7 +1963,7 @@ button:hover {
           <p class="eyebrow">LOCAL RANKING</p>
           <h2>TOP 10 플레이 로그</h2>
         </div>
-        <span>사망 후 닉네임을 남기면 기록됩니다.</span>
+        <span>단계 · 점수 · 시간 · 전투력 순</span>
       </div>
       <ol id="rankingList" class="ranking-list"></ol>
     </section>
@@ -1199,11 +1976,13 @@ button:hover {
       <p><strong>패배:</strong> HP 0</p>
     </section>
   </div>
+  </section>
 
   <script>
 document.addEventListener('DOMContentLoaded', () => {
   const gameArea = document.getElementById('gameArea');
   const player = document.getElementById('player');
+  const petCompanion = document.getElementById('petCompanion');
   const boss = document.getElementById('boss');
   const bossArt = boss.querySelector('.boss-art');
   const message = document.getElementById('message');
@@ -1221,9 +2000,107 @@ document.addEventListener('DOMContentLoaded', () => {
   const muteBtn = document.getElementById('muteBtn');
   const rankingList = document.getElementById('rankingList');
   const directionButtons = document.querySelectorAll('.direction-btn');
+  const lobbyScreen = document.getElementById('lobbyScreen');
+  const battleScreen = document.getElementById('battleScreen');
+  const enterBattleBtn = document.getElementById('enterBattleBtn');
+  const lobbyTabs = document.querySelectorAll('[data-lobby-tab]');
+  const lobbyPanels = document.querySelectorAll('[data-panel]');
+  const equipmentPanel = document.getElementById('equipmentPanel');
+  const equippedSlots = document.getElementById('equippedSlots');
+  const equipmentInventory = document.getElementById('equipmentInventory');
+  const equipmentNotice = document.getElementById('equipmentNotice');
+  const shopPanel = document.getElementById('shopPanel');
+  const openEquipmentChestBtn = document.getElementById('openEquipmentChestBtn');
+  const rotatingShopGrid = document.getElementById('rotatingShopGrid');
+  const shopNotice = document.getElementById('shopNotice');
+  const petPanel = document.getElementById('petPanel');
+  const petGrid = document.getElementById('petGrid');
+  const petNotice = document.getElementById('petNotice');
 
   const MAX_HP = 2;
-  const SWORD_DAMAGE = 8;
+  const BASE_SWORD_DAMAGE = 8;
+  const CAMPAIGN_STAGE_MAX = 15;
+  const BOSS_DATA = {
+    abyss_demon: {
+      id: 'abyss_demon',
+      name: '심연의 마왕',
+      image: './asset/bosses/optimized/stage01_abyss_slime.webp',
+    },
+  };
+  const BOSS_STAGE_IMAGES = {
+    1: './asset/bosses/optimized/stage01_abyss_slime.webp',
+    2: './asset/bosses/optimized/stage02_abyss_slime.webp',
+    3: './asset/bosses/optimized/stage03_abyss_slime.webp',
+    4: './asset/bosses/optimized/stage04_rift_golem.webp',
+    5: './asset/bosses/optimized/stage05_rift_golem.webp',
+    6: './asset/bosses/optimized/stage06_rift_golem.webp',
+    7: './asset/bosses/optimized/stage07_abyss_beast.webp',
+    8: './asset/bosses/optimized/stage08_abyss_beast.webp',
+    9: './asset/bosses/optimized/stage09_abyss_beast.webp',
+    10: './asset/bosses/optimized/stage10_high_priest.webp',
+    11: './asset/bosses/optimized/stage11_high_priest.webp',
+    12: './asset/bosses/optimized/stage12_high_priest.webp',
+    13: './asset/bosses/optimized/stage13_demon_king.webp',
+    14: './asset/bosses/optimized/stage14_awakened_demon_king.webp',
+    15: './asset/bosses/optimized/stage15_demon_king_of_end.webp',
+  };
+  const preloadedBossImages = new Set();
+  const CAMPAIGN_STAGE_DATA = {
+    1: { bossId: 'abyss_demon', baseHp: 160, difficulty: 1, meteorSpeed: 5.27, sideSpeed: 5.92, patterns: { topMeteor: { interval: 1046, count: 2 }, sideMeteor: null, floorZone: null, trackingZone: null, laser: null } },
+    2: { bossId: 'abyss_demon', baseHp: 300, difficulty: 2, meteorSpeed: 5.49, sideSpeed: 6.09, patterns: { topMeteor: { interval: 1012, count: 2 }, sideMeteor: { interval: 1926 }, floorZone: null, trackingZone: null, laser: null } },
+    3: { bossId: 'abyss_demon', baseHp: 350, difficulty: 3, meteorSpeed: 5.71, sideSpeed: 6.26, patterns: { topMeteor: { interval: 978, count: 2 }, sideMeteor: { interval: 1864 }, floorZone: { interval: 2594 }, trackingZone: null, laser: null } },
+    4: { bossId: 'abyss_demon', baseHp: 400, difficulty: 4, meteorSpeed: 5.93, sideSpeed: 6.43, patterns: { topMeteor: { interval: 944, count: 2 }, sideMeteor: { interval: 1802 }, floorZone: { interval: 2542 }, trackingZone: { interval: 3118 }, laser: null } },
+    5: { bossId: 'abyss_demon', baseHp: 470, difficulty: 5, meteorSpeed: 6.15, sideSpeed: 6.6, patterns: { topMeteor: { interval: 910, count: 2 }, sideMeteor: { interval: 1740 }, floorZone: { interval: 2490 }, trackingZone: { interval: 3060 }, laser: { interval: 4625 } } },
+    6: { bossId: 'abyss_demon', baseHp: 540, difficulty: 6, meteorSpeed: 6.37, sideSpeed: 6.77, patterns: { topMeteor: { interval: 876, count: 2 }, sideMeteor: { interval: 1678 }, floorZone: { interval: 2438 }, trackingZone: { interval: 3002 }, laser: { interval: 4540 } } },
+    7: { bossId: 'abyss_demon', baseHp: 630, difficulty: 7, meteorSpeed: 6.59, sideSpeed: 6.94, patterns: { topMeteor: { interval: 860, count: 3 }, sideMeteor: { interval: 1650 }, floorZone: { interval: 2200 }, trackingZone: null, laser: { interval: 4500 } } },
+    8: { bossId: 'abyss_demon', baseHp: 730, difficulty: 8, meteorSpeed: 6.81, sideSpeed: 7.11, patterns: { topMeteor: { interval: 820, count: 3 }, sideMeteor: { interval: 1550 }, floorZone: null, trackingZone: { interval: 2700 }, laser: { interval: 4300 } } },
+    9: { bossId: 'abyss_demon', baseHp: 850, difficulty: 9, meteorSpeed: 7.03, sideSpeed: 7.28, patterns: { topMeteor: { interval: 780, count: 3 }, sideMeteor: null, floorZone: { interval: 2050 }, trackingZone: { interval: 2550 }, laser: { interval: 4050 } } },
+    10: { bossId: 'abyss_demon', baseHp: 980, difficulty: 10, meteorSpeed: 7.25, sideSpeed: 7.45, patterns: { topMeteor: { interval: 740, count: 3 }, sideMeteor: { interval: 1380 }, floorZone: { interval: 1900 }, trackingZone: { interval: 2400 }, laser: { interval: 3800 } } },
+    11: { bossId: 'abyss_demon', baseHp: 1140, difficulty: 11, meteorSpeed: 7.47, sideSpeed: 7.62, patterns: { topMeteor: { interval: 720, count: 3 }, sideMeteor: { interval: 1320 }, floorZone: { interval: 1820 }, trackingZone: { interval: 2250 }, laser: { interval: 3650 } }, sequences: [{ interval: 7500, actions: [{ type: 'floorZone', count: 2, delay: 0 }, { type: 'sideMeteor', count: 1, delay: 700 }] }] },
+    12: { bossId: 'abyss_demon', baseHp: 1320, difficulty: 12, meteorSpeed: 7.69, sideSpeed: 7.79, patterns: { topMeteor: { interval: 700, count: 3 }, sideMeteor: { interval: 1260 }, floorZone: { interval: 1740 }, trackingZone: { interval: 2140 }, laser: { interval: 3500 } }, sequences: [{ interval: 7200, actions: [{ type: 'floorZone', count: 2, delay: 0 }, { type: 'trackingZone', count: 1, delay: 0 }, { type: 'topMeteor', count: 3, delay: 650 }] }] },
+    13: { bossId: 'abyss_demon', baseHp: 1540, difficulty: 13, meteorSpeed: 7.91, sideSpeed: 7.96, patterns: { topMeteor: { interval: 680, count: 4 }, sideMeteor: { interval: 1200 }, floorZone: { interval: 1680 }, trackingZone: { interval: 2050 }, laser: { interval: 3350 } }, sequences: [{ interval: 6800, actions: [{ type: 'floorZone', count: 2, delay: 0 }, { type: 'trackingZone', count: 1, delay: 0 }, { type: 'sideMeteor', count: 2, delay: 750 }] }] },
+    14: { bossId: 'abyss_demon', baseHp: 1780, difficulty: 14, meteorSpeed: 8.13, sideSpeed: 8.13, patterns: { topMeteor: { interval: 660, count: 4 }, sideMeteor: { interval: 1140 }, floorZone: { interval: 1600 }, trackingZone: { interval: 2050 }, laser: { interval: 3200 } }, sequences: [{ interval: 6500, actions: [{ type: 'laser', count: 1, delay: 0 }, { type: 'topMeteor', count: 4, delay: 500 }, { type: 'trackingZone', count: 1, delay: 1100 }] }] },
+    15: { bossId: 'abyss_demon', baseHp: 2070, difficulty: 15, meteorSpeed: 8.35, sideSpeed: 8.3, isFinalTrial: true, patterns: { topMeteor: { interval: 660, count: 4 }, sideMeteor: { interval: 1120 }, floorZone: { interval: 1580 }, trackingZone: { interval: 2050 }, laser: { interval: 2950 } }, sequences: [{ interval: 6000, actions: [{ type: 'floorZone', count: 2, delay: 0 }, { type: 'trackingZone', count: 1, delay: 0 }, { type: 'laser', count: 1, delay: 700 }, { type: 'topMeteor', count: 4, delay: 1200 }, { type: 'sideMeteor', count: 2, delay: 1500 }] }] },
+  };
+  const INFINITE_MODE_RULES = {
+    hpGrowthRate: 1.11,
+    intervalScalePerStage: 0.97,
+    meteorSpeedPerStage: 0.08,
+    sideSpeedPerStage: 0.07,
+    extraMeteorEvery: 5,
+    maxMeteorCount: 6,
+    minimumIntervals: { topMeteor: 520, sideMeteor: 900, floorZone: 1250, trackingZone: 1600, laser: 2350, sequence: 4300 },
+  };
+  const BALANCE_CONFIG = {
+    playerExp: { base: 90, perLevel: 22 },
+    bossRewards: {
+      expBase: 22,
+      expPerStage: 6,
+      goldBase: 40,
+      goldPerStage: 12,
+      stoneGuaranteedEvery: 3,
+      stoneTierEvery: 12,
+      bonusStoneChanceBase: 0.12,
+      bonusStoneChancePerStage: 0.005,
+      bonusStoneChanceMax: 0.28,
+      equipmentChestEvery: 5,
+    },
+    pet: {
+      requiredExp: [0, 100, 260, 540, 950],
+      expBase: 12,
+      expPerStage: 4,
+      minimumBossKills: 3,
+    },
+    equipment: {
+      levelBaseCost: { common: 80, rare: 160, epic: 300, legendary: 520 },
+      levelCostGrowth: 0.15,
+      enhancementStoneCosts: [1, 1, 2, 2, 3, 4, 5, 6, 8, 10],
+      enhancementSuccessRates: [100, 95, 90, 85, 75, 65, 55, 45, 35, 25],
+      enhancementDestroyRates: [0, 0, 0, 0, 0, 0, 0, 5, 10, 15],
+    },
+    chestTierThresholds: { common: 0.6, rare: 0.9, epic: 0.99 },
+    bossPlayerGrowthHpPerLevel: 0.01,
+  };
   const battleBgm = new Audio('./asset/audio/battle_bgm.mp3');
   battleBgm.loop = true;
   battleBgm.preload = 'none';
@@ -1263,12 +2140,26 @@ document.addEventListener('DOMContentLoaded', () => {
   let score = 0;
   let bossMaxHp = 200;
   let bossHp = bossMaxHp;
+  let activeCombatStats = {
+    playerLevel: 1,
+    attack: BASE_SWORD_DAMAGE,
+    criticalRate: 5,
+    swordCount: 1,
+    stoneBonusRate: 0,
+    shieldCharges: 0,
+    shieldRechargeRate: 0,
+    petAttackDamage: 0,
+    petAttackInterval: 0,
+    petId: null,
+  };
+  let activeShieldCharges = 0;
   let keys = {};
   const touchDirections = new Set();
   let hazards = [];
   let swords = [];
   let timers = [];
   let animationId = null;
+  let isAutoPaused = false;
   let activeDamageText = null;
   let accumulatedDamage = 0;
   let damageDisplayVersion = 0;
@@ -1281,9 +2172,935 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const AUDIO_STORAGE_KEY = 'dungeonRaidAudioSettings';
   const RANKING_STORAGE_KEY = 'dungeonRaidRankings';
+  const PLAYER_PROFILE_STORAGE_KEY = 'abyssRaidPlayerProfileV1';
+  const PLAYER_SAVE_VERSION = 14;
+  const MAX_EQUIPMENT_LEVEL = 50;
+  const MAX_ENHANCEMENT = 10;
+  const EQUIPMENT_CHEST_COST = 500;
+  const LEGENDARY_PITY_LIMIT = 30;
+  const MAX_PET_LEVEL = 5;
+  const SHOP_REFRESH_BATTLES = 3;
+  const SHOP_EQUIPMENT_PRICES = { common: 350, rare: 900, epic: 2400, legendary: 6000 };
+
+  const EQUIPMENT_SLOTS = {
+    weapon: '무기',
+    gloves: '장갑',
+    ring: '반지',
+    necklace: '목걸이',
+  };
+
+  const EQUIPMENT_TIERS = {
+    common: '커먼',
+    rare: '레어',
+    epic: '에픽',
+    legendary: '레전더리',
+  };
+
+  const EQUIPMENT_DATA = {
+    weapon_common_1: { id: 'weapon_common_1', slot: 'weapon', tier: 'common', requiredLevel: 1, name: '균열의 낡은 검', statKey: 'attack', statValue: 2 },
+    gloves_common_1: { id: 'gloves_common_1', slot: 'gloves', tier: 'common', requiredLevel: 1, name: '심연 순찰자의 장갑', statKey: 'criticalRate', statValue: 2 },
+    ring_common_1: { id: 'ring_common_1', slot: 'ring', tier: 'common', requiredLevel: 1, name: '잊힌 맹세의 반지', statKey: 'goldBonusRate', statValue: 5 },
+    necklace_common_1: { id: 'necklace_common_1', slot: 'necklace', tier: 'common', requiredLevel: 1, name: '균열석 목걸이', statKey: 'stoneBonusRate', statValue: 5 },
+    weapon_rare_10: { id: 'weapon_rare_10', slot: 'weapon', tier: 'rare', requiredLevel: 10, name: '심연 감시자의 검', statKey: 'attack', statValue: 6 },
+    gloves_rare_10: { id: 'gloves_rare_10', slot: 'gloves', tier: 'rare', requiredLevel: 10, name: '검은 파수꾼의 장갑', statKey: 'criticalRate', statValue: 5 },
+    ring_rare_10: { id: 'ring_rare_10', slot: 'ring', tier: 'rare', requiredLevel: 10, name: '침식된 서약의 반지', statKey: 'goldBonusRate', statValue: 10 },
+    necklace_rare_10: { id: 'necklace_rare_10', slot: 'necklace', tier: 'rare', requiredLevel: 10, name: '마력 응축 목걸이', statKey: 'stoneBonusRate', statValue: 10 },
+    weapon_epic_25: { id: 'weapon_epic_25', slot: 'weapon', tier: 'epic', requiredLevel: 25, name: '마왕군 파쇄검', statKey: 'attack', statValue: 12 },
+    gloves_epic_25: { id: 'gloves_epic_25', slot: 'gloves', tier: 'epic', requiredLevel: 25, name: '심연 포식자의 장갑', statKey: 'criticalRate', statValue: 9 },
+    ring_epic_25: { id: 'ring_epic_25', slot: 'ring', tier: 'epic', requiredLevel: 25, name: '붉은 월식의 반지', statKey: 'goldBonusRate', statValue: 20 },
+    necklace_epic_25: { id: 'necklace_epic_25', slot: 'necklace', tier: 'epic', requiredLevel: 25, name: '어비스 결정 목걸이', statKey: 'stoneBonusRate', statValue: 20 },
+    weapon_legendary_40: { id: 'weapon_legendary_40', slot: 'weapon', tier: 'legendary', requiredLevel: 40, name: '종언의 성물: 멸망검', statKey: 'attack', statValue: 20 },
+    gloves_legendary_40: { id: 'gloves_legendary_40', slot: 'gloves', tier: 'legendary', requiredLevel: 40, name: '종언의 성물: 심판의 수갑', statKey: 'criticalRate', statValue: 15 },
+    ring_legendary_40: { id: 'ring_legendary_40', slot: 'ring', tier: 'legendary', requiredLevel: 40, name: '종언의 성물: 마지막 계약', statKey: 'goldBonusRate', statValue: 35 },
+    necklace_legendary_40: { id: 'necklace_legendary_40', slot: 'necklace', tier: 'legendary', requiredLevel: 40, name: '종언의 성물: 공허의 심장', statKey: 'stoneBonusRate', statValue: 35 },
+  };
+
+  const STARTER_EQUIPMENT = ['weapon_common_1', 'gloves_common_1', 'ring_common_1', 'necklace_common_1'];
+  const DUPLICATE_STONE_REWARD = { common: 1, rare: 3, epic: 8, legendary: 20 };
+  const EQUIPMENT_SALE_GOLD = { common: 100, rare: 300, epic: 800, legendary: 2000 };
+  const PET_DATA = {
+    ember_wyvern: { id: 'ember_wyvern', name: '아르', title: '잿불 비룡', mark: '화', type: 'attack', dungeonImage: './asset/pets/ar_dungeon_rear.png', portraitImage: './asset/pets/ember_wyvern_portrait.png', description: '화염탄 보조 공격 · 레벨마다 피해량과 발사 속도 증가' },
+    rift_guardian: { id: 'rift_guardian', name: '루메', title: '균열 수호령', mark: '수', type: 'shield', dungeonImage: './asset/pets/lume_dungeon_rear.png', portraitImage: './asset/pets/rift_guardian_portrait.png', description: '전투 시작 시 보호막 1회 · 보스 처치 시 재충전 확률 증가' },
+    gold_mimic: { id: 'gold_mimic', name: '모라', title: '황금 미믹', mark: '금', type: 'gold', dungeonImage: './asset/pets/mora_dungeon_rear.png', portraitImage: './asset/pets/gold_mimic_portrait.png', description: '펫 레벨마다 골드·강화석 획득량 +5%' },
+  };
 
   let lastRunResult = null;
   let currentRunSaved = false;
+  let currentRunBossKills = 0;
+  let runStartedAt = 0;
+  let runPausedAt = 0;
+  let runPausedDuration = 0;
+  let currentRunRewards = { exp: 0, gold: 0, enhancementStones: 0, equipmentChests: 0, levelsGained: 0, petExp: 0, petLevelsGained: 0, petExpDiscarded: 0 };
+
+  const DEFAULT_PLAYER_PROFILE = {
+    saveVersion: PLAYER_SAVE_VERSION,
+    level: 1,
+    maxLevel: 50,
+    exp: 0,
+    expMax: 100,
+    gold: 0,
+    enhancementStones: 0,
+    baseAttack: 8,
+    maxHp: MAX_HP,
+    criticalRate: 5,
+    baseSwordCount: 1,
+    weaponLevel: 1,
+    inventory: [...STARTER_EQUIPMENT],
+    equipped: {
+      weapon: 'weapon_common_1',
+      gloves: 'gloves_common_1',
+      ring: 'ring_common_1',
+      necklace: 'necklace_common_1',
+    },
+    equipmentProgress: {},
+    equipmentChestPity: 0,
+    totalEquipmentChests: 0,
+    freeEquipmentChests: 0,
+    highestBossStage: 0,
+    equipmentDismantleCount: 0,
+    shopOffers: [],
+    shopBattlesRemaining: SHOP_REFRESH_BATTLES,
+    shopCycle: 0,
+    ownedPets: [],
+    equippedPet: null,
+    petProgress: {},
+  };
+
+  function createDefaultPlayerProfile() {
+    return {
+      ...DEFAULT_PLAYER_PROFILE,
+      inventory: [...DEFAULT_PLAYER_PROFILE.inventory],
+      equipped: { ...DEFAULT_PLAYER_PROFILE.equipped },
+      equipmentProgress: { ...DEFAULT_PLAYER_PROFILE.equipmentProgress },
+      shopOffers: DEFAULT_PLAYER_PROFILE.shopOffers.map((offer) => ({ ...offer })),
+      ownedPets: [...DEFAULT_PLAYER_PROFILE.ownedPets],
+      petProgress: Object.fromEntries(
+        Object.entries(DEFAULT_PLAYER_PROFILE.petProgress).map(([petId, progress]) => [petId, { ...progress }])
+      ),
+    };
+  }
+
+  function readProfileNumber(value, fallback, min = 0, max = Number.MAX_SAFE_INTEGER) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return fallback;
+    return Math.min(max, Math.max(min, parsed));
+  }
+
+  function savePlayerProfile(profile) {
+    try {
+      localStorage.setItem(PLAYER_PROFILE_STORAGE_KEY, JSON.stringify({
+        ...profile,
+        saveVersion: PLAYER_SAVE_VERSION,
+      }));
+    } catch (error) {
+      // 저장이 제한된 환경에서는 현재 세션의 기본값으로 로비를 표시합니다.
+    }
+  }
+
+  function loadPlayerProfile() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(PLAYER_PROFILE_STORAGE_KEY));
+      if (!saved || typeof saved !== 'object') {
+        const profile = createDefaultPlayerProfile();
+        ensureShopState(profile);
+        return profile;
+      }
+
+      const inventory = [...new Set([
+        ...STARTER_EQUIPMENT,
+        ...(Array.isArray(saved.inventory) ? saved.inventory : []),
+      ])].filter((itemId) => Boolean(EQUIPMENT_DATA[itemId]));
+
+      const equipped = { ...DEFAULT_PLAYER_PROFILE.equipped };
+      if (saved.equipped && typeof saved.equipped === 'object') {
+        Object.keys(EQUIPMENT_SLOTS).forEach((slot) => {
+          const itemId = saved.equipped[slot];
+          const item = EQUIPMENT_DATA[itemId];
+          if (item && item.slot === slot && inventory.includes(itemId)) equipped[slot] = itemId;
+        });
+      }
+
+      const equipmentProgress = {};
+      inventory.forEach((itemId) => {
+        const savedProgress = saved.equipmentProgress && saved.equipmentProgress[itemId];
+        equipmentProgress[itemId] = {
+          level: Math.floor(readProfileNumber(savedProgress?.level, 1, 1, MAX_EQUIPMENT_LEVEL)),
+          enhancement: Math.floor(readProfileNumber(savedProgress?.enhancement, 0, 0, MAX_ENHANCEMENT)),
+        };
+      });
+
+      if (!saved.equipmentProgress && Number(saved.weaponLevel) > 1) {
+        equipmentProgress.weapon_common_1.enhancement = Math.min(MAX_ENHANCEMENT, Number(saved.weaponLevel) - 1);
+      }
+
+      const ownedPets = [...new Set(
+        Array.isArray(saved.ownedPets) ? saved.ownedPets : []
+      )].filter((petId) => Boolean(PET_DATA[petId]));
+      const petProgress = {};
+      ownedPets.forEach((petId) => {
+        const savedPetProgress = saved.petProgress && saved.petProgress[petId];
+        petProgress[petId] = {
+          level: Math.floor(readProfileNumber(savedPetProgress?.level, 1, 1, MAX_PET_LEVEL)),
+          exp: Math.floor(readProfileNumber(savedPetProgress?.exp, 0, 0)),
+        };
+      });
+      const equippedPet = ownedPets.includes(saved.equippedPet) ? saved.equippedPet : (ownedPets[0] || null);
+
+      const profile = {
+        ...createDefaultPlayerProfile(),
+        saveVersion: PLAYER_SAVE_VERSION,
+        level: readProfileNumber(saved.level, 1, 1, 50),
+        maxLevel: 50,
+        exp: readProfileNumber(saved.exp, 0),
+        expMax: readProfileNumber(saved.expMax, 100, 1),
+        gold: readProfileNumber(saved.gold, 0),
+        enhancementStones: readProfileNumber(saved.enhancementStones, 0),
+        baseAttack: readProfileNumber(saved.baseAttack, 8, 1),
+        maxHp: readProfileNumber(saved.maxHp, MAX_HP, 1),
+        criticalRate: readProfileNumber(saved.criticalRate, 5, 0, 100),
+        baseSwordCount: readProfileNumber(saved.baseSwordCount, 1, 1),
+        weaponLevel: readProfileNumber(saved.weaponLevel, 1, 1),
+        inventory,
+        equipped,
+        equipmentProgress,
+        equipmentChestPity: Math.floor(readProfileNumber(saved.equipmentChestPity, 0, 0, LEGENDARY_PITY_LIMIT - 1)),
+        totalEquipmentChests: Math.floor(readProfileNumber(saved.totalEquipmentChests, 0, 0)),
+        freeEquipmentChests: Math.floor(readProfileNumber(saved.freeEquipmentChests, 0, 0)),
+        highestBossStage: Math.floor(readProfileNumber(saved.highestBossStage, 0, 0)),
+        equipmentDismantleCount: Math.floor(readProfileNumber(saved.equipmentDismantleCount, 0, 0)),
+        shopOffers: Array.isArray(saved.shopOffers) ? saved.shopOffers.map((offer) => ({ ...offer })) : [],
+        shopBattlesRemaining: Math.floor(readProfileNumber(saved.shopBattlesRemaining, SHOP_REFRESH_BATTLES, 1, SHOP_REFRESH_BATTLES)),
+        shopCycle: Math.floor(readProfileNumber(saved.shopCycle, 0, 0)),
+        ownedPets,
+        equippedPet,
+        petProgress,
+      };
+      ensureShopState(profile);
+      unlockEligiblePets(profile);
+      return profile;
+    } catch (error) {
+      const profile = createDefaultPlayerProfile();
+      ensureShopState(profile);
+      return profile;
+    }
+  }
+
+  function getRequiredPlayerExp(playerLevel) {
+    return BALANCE_CONFIG.playerExp.base
+      + (Math.max(1, playerLevel) - 1) * BALANCE_CONFIG.playerExp.perLevel;
+  }
+
+  function getRequiredPetExp(petLevel) {
+    return BALANCE_CONFIG.pet.requiredExp[petLevel] || 0;
+  }
+
+  function getPetProgress(profile, petId) {
+    return profile.petProgress?.[petId] || { level: 1, exp: 0 };
+  }
+
+  function getPetUnlockState(profile, petId) {
+    if (petId === 'ember_wyvern') {
+      const current = Math.min(5, profile.highestBossStage || 0);
+      return { unlocked: current >= 5, label: `보스 5단계 클리어 (${current}/5)` };
+    }
+    if (petId === 'rift_guardian') {
+      const current = Math.min(10, profile.level || 1);
+      return { unlocked: current >= 10, label: `기사 Lv.10 달성 (${current}/10)` };
+    }
+    const current = Math.min(10, profile.equipmentDismantleCount || 0);
+    return { unlocked: current >= 10, label: `장비 10개 분해 (${current}/10)` };
+  }
+
+  function unlockEligiblePets(profile) {
+    const unlockedNames = [];
+    profile.ownedPets = Array.isArray(profile.ownedPets) ? [...profile.ownedPets] : [];
+    profile.petProgress = profile.petProgress && typeof profile.petProgress === 'object'
+      ? { ...profile.petProgress }
+      : {};
+
+    Object.values(PET_DATA).forEach((pet) => {
+      if (profile.ownedPets.includes(pet.id) || !getPetUnlockState(profile, pet.id).unlocked) return;
+      profile.ownedPets.push(pet.id);
+      profile.petProgress[pet.id] = { level: 1, exp: 0 };
+      unlockedNames.push(pet.name);
+    });
+
+    if (!profile.equippedPet && profile.ownedPets.length > 0) profile.equippedPet = profile.ownedPets[0];
+    return unlockedNames;
+  }
+
+  function getPetBonuses(profile) {
+    const pet = PET_DATA[profile.equippedPet];
+    if (!pet) return { goldBonusRate: 0, stoneBonusRate: 0, shieldCharges: 0, shieldRechargeRate: 0, petAttackRate: 0, petAttackInterval: 0 };
+
+    const progress = getPetProgress(profile, pet.id);
+    return {
+      goldBonusRate: pet.type === 'gold' ? progress.level * 5 : 0,
+      stoneBonusRate: pet.type === 'gold' ? progress.level * 5 : 0,
+      shieldCharges: pet.type === 'shield' ? 1 : 0,
+      shieldRechargeRate: pet.type === 'shield' ? progress.level * 10 : 0,
+      petAttackRate: pet.type === 'attack' ? 0.2 + progress.level * 0.05 : 0,
+      petAttackInterval: pet.type === 'attack' ? 2200 - progress.level * 150 : 0,
+    };
+  }
+
+  function getPetExperienceForBoss(profile, petId, stage) {
+    if (!PET_DATA[petId] || !profile.ownedPets.includes(petId)) return 0;
+    if (getPetProgress(profile, petId).level >= MAX_PET_LEVEL) return 0;
+    return BALANCE_CONFIG.pet.expBase
+      + Math.max(1, Math.floor(stage)) * BALANCE_CONFIG.pet.expPerStage;
+  }
+
+  function settlePetExperience(petId, pendingExp, bossKills) {
+    const profile = loadPlayerProfile();
+    const safePendingExp = Math.max(0, Math.floor(pendingExp));
+    if (bossKills < BALANCE_CONFIG.pet.minimumBossKills || safePendingExp <= 0 || !profile.ownedPets.includes(petId)) {
+      return {
+        petExp: 0,
+        petLevelsGained: 0,
+        petExpDiscarded: bossKills < BALANCE_CONFIG.pet.minimumBossKills ? safePendingExp : 0,
+      };
+    }
+
+    const progress = { ...getPetProgress(profile, petId) };
+    if (progress.level >= MAX_PET_LEVEL) return { petExp: 0, petLevelsGained: 0, petExpDiscarded: 0 };
+
+    let petLevelsGained = 0;
+    progress.exp += safePendingExp;
+
+    while (progress.level < MAX_PET_LEVEL) {
+      const requiredExp = getRequiredPetExp(progress.level);
+      if (progress.exp < requiredExp) break;
+      progress.exp -= requiredExp;
+      progress.level += 1;
+      petLevelsGained += 1;
+    }
+
+    if (progress.level >= MAX_PET_LEVEL) progress.exp = 0;
+    profile.petProgress = { ...profile.petProgress, [petId]: progress };
+    savePlayerProfile(profile);
+    return { petExp: safePendingExp, petLevelsGained, petExpDiscarded: 0 };
+  }
+
+  function getEquipmentProgress(profile, itemId) {
+    return profile.equipmentProgress?.[itemId] || { level: 1, enhancement: 0 };
+  }
+
+  function getEquipmentStatValue(item, progress) {
+    const levelScale = 1 + (progress.level - 1) * 0.02;
+    const breakthroughScale = progress.level >= 50 ? 1.5 : progress.level >= 25 ? 1.2 : 1;
+    const enhancementScale = 1 + progress.enhancement * 0.06;
+    return Math.max(1, Math.round(item.statValue * levelScale * breakthroughScale * enhancementScale));
+  }
+
+  function getEquipmentLevelUpCost(item, currentLevel) {
+    const equipmentBalance = BALANCE_CONFIG.equipment;
+    return Math.round(
+      equipmentBalance.levelBaseCost[item.tier]
+      * (1 + (currentLevel - 1) * equipmentBalance.levelCostGrowth)
+    );
+  }
+
+  function getEnhancementRule(currentEnhancement) {
+    const equipmentBalance = BALANCE_CONFIG.equipment;
+    if (currentEnhancement >= MAX_ENHANCEMENT) return null;
+    return {
+      stoneCost: equipmentBalance.enhancementStoneCosts[currentEnhancement],
+      successRate: equipmentBalance.enhancementSuccessRates[currentEnhancement],
+      destroyRate: equipmentBalance.enhancementDestroyRates[currentEnhancement],
+    };
+  }
+
+  function getEquipmentBonuses(profile) {
+    const bonuses = { attack: 0, criticalRate: 0, goldBonusRate: 0, stoneBonusRate: 0, swordCount: 0 };
+    Object.values(profile.equipped || {}).forEach((itemId) => {
+      const item = EQUIPMENT_DATA[itemId];
+      if (!item) return;
+      const progress = getEquipmentProgress(profile, itemId);
+      if (item.statKey in bonuses) bonuses[item.statKey] += getEquipmentStatValue(item, progress);
+      const hasEpicSwordPerk = item.tier === 'epic' && progress.level >= MAX_EQUIPMENT_LEVEL;
+      const hasLegendarySwordPerk = item.tier === 'legendary' && progress.enhancement >= MAX_ENHANCEMENT;
+      if (item.slot === 'weapon' && (hasEpicSwordPerk || hasLegendarySwordPerk)) {
+        bonuses.swordCount += 1;
+      }
+    });
+    return bonuses;
+  }
+
+  function getPlayerCombatStats(profile) {
+    const levelAttackBonus = Math.floor((profile.level - 1) / 5);
+    const equipmentBonuses = getEquipmentBonuses(profile);
+    const petBonuses = getPetBonuses(profile);
+    const attack = profile.baseAttack + (profile.weaponLevel - 1) * 2 + levelAttackBonus + equipmentBonuses.attack;
+    return {
+      playerLevel: profile.level,
+      attack,
+      criticalRate: Math.min(100, profile.criticalRate + equipmentBonuses.criticalRate),
+      swordCount: profile.baseSwordCount + equipmentBonuses.swordCount,
+      goldBonusRate: equipmentBonuses.goldBonusRate + petBonuses.goldBonusRate,
+      stoneBonusRate: equipmentBonuses.stoneBonusRate + petBonuses.stoneBonusRate,
+      shieldCharges: Math.min(1, petBonuses.shieldCharges),
+      shieldRechargeRate: petBonuses.shieldRechargeRate,
+      petAttackDamage: petBonuses.petAttackRate > 0 ? Math.max(2, Math.round(attack * petBonuses.petAttackRate)) : 0,
+      petAttackInterval: petBonuses.petAttackInterval,
+      petId: profile.equippedPet,
+    };
+  }
+
+  function getCombatPower(profile) {
+    const stats = getPlayerCombatStats(profile);
+    return 70 + stats.attack * 4 + stats.criticalRate * 2 + stats.swordCount * 25 + stats.petAttackDamage * 3 + (profile.level - 1) * 18;
+  }
+
+  function getBossClearRewards(stage, random = Math.random) {
+    const safeStage = Math.max(1, Math.floor(stage));
+    const rewards = BALANCE_CONFIG.bossRewards;
+    const guaranteedStones = safeStage % rewards.stoneGuaranteedEvery === 0
+      ? 1 + Math.floor(safeStage / rewards.stoneTierEvery)
+      : 0;
+    const bonusStoneChance = Math.min(
+      rewards.bonusStoneChanceMax,
+      rewards.bonusStoneChanceBase + safeStage * rewards.bonusStoneChancePerStage
+    );
+    return {
+      exp: rewards.expBase + safeStage * rewards.expPerStage,
+      gold: rewards.goldBase + safeStage * rewards.goldPerStage,
+      enhancementStones: guaranteedStones + (random() < bonusStoneChance ? 1 : 0),
+    };
+  }
+
+  function grantBossClearRewards(stage, runPetId) {
+    const profile = loadPlayerProfile();
+    const baseRewards = getBossClearRewards(stage);
+    const equipmentBonuses = getEquipmentBonuses(profile);
+    const petBonuses = getPetBonuses(profile);
+    const rewards = {
+      exp: baseRewards.exp,
+      gold: Math.floor(baseRewards.gold * (1 + (equipmentBonuses.goldBonusRate + petBonuses.goldBonusRate) / 100)),
+      enhancementStones: Math.floor(baseRewards.enhancementStones * (1 + (equipmentBonuses.stoneBonusRate + petBonuses.stoneBonusRate) / 100)),
+      equipmentChests: Math.max(1, Math.floor(stage)) % BALANCE_CONFIG.bossRewards.equipmentChestEvery === 0 ? 1 : 0,
+    };
+    let levelsGained = 0;
+
+    profile.exp += rewards.exp;
+    profile.gold += rewards.gold;
+    profile.enhancementStones += rewards.enhancementStones;
+    profile.freeEquipmentChests += rewards.equipmentChests;
+    profile.highestBossStage = Math.max(profile.highestBossStage, Math.max(1, Math.floor(stage)));
+
+    while (profile.level < profile.maxLevel) {
+      const requiredExp = getRequiredPlayerExp(profile.level);
+      if (profile.exp < requiredExp) break;
+      profile.exp -= requiredExp;
+      profile.level += 1;
+      levelsGained += 1;
+    }
+
+    profile.expMax = getRequiredPlayerExp(profile.level);
+    if (profile.level >= profile.maxLevel) {
+      profile.level = profile.maxLevel;
+      profile.exp = Math.min(profile.exp, profile.expMax);
+    }
+
+    const petExp = getPetExperienceForBoss(profile, runPetId, stage);
+    const unlockedPets = unlockEligiblePets(profile);
+
+    savePlayerProfile(profile);
+    return { ...rewards, levelsGained, petExp, petLevelsGained: 0, unlockedPets };
+  }
+
+  function setLobbyText(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  }
+
+  function formatEquipmentStat(item, progress = { level: 1, enhancement: 0 }) {
+    const labels = {
+      attack: '공격력',
+      criticalRate: '치명타율',
+      goldBonusRate: '골드 획득량',
+      stoneBonusRate: '강화석 획득량',
+    };
+    const suffix = item.statKey === 'attack' ? '' : '%';
+    return `${labels[item.statKey]} +${getEquipmentStatValue(item, progress)}${suffix}`;
+  }
+
+  function getWeaponPerkText(item, progress) {
+    if (item.slot !== 'weapon') return '';
+    if (item.tier === 'epic') {
+      return progress.level >= MAX_EQUIPMENT_LEVEL ? '특전 활성: 검기 +1' : '특전: 성장 LV.50 달성 시 검기 +1';
+    }
+    if (item.tier === 'legendary') {
+      return progress.enhancement >= MAX_ENHANCEMENT ? '특전 활성: 검기 +1' : '특전: +10강 달성 시 검기 +1';
+    }
+    return '';
+  }
+
+  function renderEquipment(profile) {
+    if (!equippedSlots || !equipmentInventory) return;
+
+    equippedSlots.innerHTML = Object.entries(EQUIPMENT_SLOTS).map(([slot, slotName]) => {
+      const item = EQUIPMENT_DATA[profile.equipped[slot]];
+      if (!item) {
+        return `<div class="equipment-slot"><span>${slotName}</span><strong class="empty-slot">비어 있음</strong></div>`;
+      }
+      const progress = getEquipmentProgress(profile, item.id);
+      return `
+        <div class="equipment-slot equipped">
+          <span>${slotName} · ${EQUIPMENT_TIERS[item.tier]}</span>
+          <strong class="equipment-tier-${item.tier}">${item.name}</strong>
+          <p class="slot-level">장비 LV.${progress.level} · +${progress.enhancement}강<br />${formatEquipmentStat(item, progress)}${getWeaponPerkText(item, progress) ? `<br />${getWeaponPerkText(item, progress)}` : ''}</p>
+        </div>`;
+    }).join('');
+
+    equipmentInventory.innerHTML = profile.inventory.map((itemId) => {
+      const item = EQUIPMENT_DATA[itemId];
+      const progress = getEquipmentProgress(profile, item.id);
+      const isEquipped = profile.equipped[item.slot] === item.id;
+      const isLocked = profile.level < item.requiredLevel;
+      const levelCost = progress.level < MAX_EQUIPMENT_LEVEL ? getEquipmentLevelUpCost(item, progress.level) : 0;
+      const enhancementRule = getEnhancementRule(progress.enhancement);
+      const effectiveDestroyRate = STARTER_EQUIPMENT.includes(item.id) ? 0 : enhancementRule?.destroyRate || 0;
+      const cannotDispose = isEquipped || STARTER_EQUIPMENT.includes(item.id);
+      return `
+        <div class="inventory-item">
+          <div>
+            <strong class="equipment-tier-${item.tier}">${item.name}</strong>
+            <p>${EQUIPMENT_SLOTS[item.slot]} · ${EQUIPMENT_TIERS[item.tier]} · 요구 LV.${item.requiredLevel}<br />장비 LV.${progress.level} · +${progress.enhancement}강 · ${formatEquipmentStat(item, progress)}${getWeaponPerkText(item, progress) ? `<br />${getWeaponPerkText(item, progress)}` : ''}</p>
+          </div>
+          <div class="inventory-actions">
+            <button type="button" data-equip-id="${item.id}" ${isEquipped || isLocked ? 'disabled' : ''}>${isEquipped ? '장착 중' : isLocked ? '레벨 부족' : '장착'}</button>
+            <button type="button" data-level-up-id="${item.id}" ${progress.level >= MAX_EQUIPMENT_LEVEL || profile.gold < levelCost ? 'disabled' : ''}>${progress.level >= MAX_EQUIPMENT_LEVEL ? '레벨 MAX' : `레벨업 ${levelCost}G`}</button>
+            <button type="button" data-enhance-id="${item.id}" ${!enhancementRule || profile.enhancementStones < (enhancementRule?.stoneCost || 0) ? 'disabled' : ''}>${enhancementRule ? `강화 ${enhancementRule.stoneCost}석 (${enhancementRule.successRate}%${effectiveDestroyRate ? ` · 파괴 ${effectiveDestroyRate}%` : ''})` : '강화 MAX'}</button>
+            <button type="button" data-sell-id="${item.id}" ${cannotDispose ? 'disabled' : ''}>판매 ${EQUIPMENT_SALE_GOLD[item.tier]}G</button>
+            <button type="button" data-dismantle-id="${item.id}" ${cannotDispose ? 'disabled' : ''}>분해 ${DUPLICATE_STONE_REWARD[item.tier]}석</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function showEquipmentNotice(message) {
+    if (equipmentNotice) equipmentNotice.textContent = message;
+  }
+
+  function disposeEquipment(itemId, mode) {
+    const profile = loadPlayerProfile();
+    const item = EQUIPMENT_DATA[itemId];
+    if (!item || !profile.inventory.includes(itemId)) return;
+    if (STARTER_EQUIPMENT.includes(itemId)) {
+      showEquipmentNotice('기본 지급 장비는 처분할 수 없습니다.');
+      return;
+    }
+    if (Object.values(profile.equipped).includes(itemId)) {
+      showEquipmentNotice('장착 중인 장비는 처분할 수 없습니다.');
+      return;
+    }
+
+    const rewardText = mode === 'sell'
+      ? `${EQUIPMENT_SALE_GOLD[item.tier]} 골드`
+      : `강화석 ${DUPLICATE_STONE_REWARD[item.tier]}개`;
+    const actionText = mode === 'sell' ? '판매' : '분해';
+    if (!window.confirm(`${item.name}을(를) ${actionText}하고 ${rewardText}를 받으시겠습니까?`)) return;
+
+    profile.inventory = profile.inventory.filter((ownedId) => ownedId !== itemId);
+    profile.equipmentProgress = { ...profile.equipmentProgress };
+    delete profile.equipmentProgress[itemId];
+
+    let unlockedPets = [];
+    if (mode === 'sell') {
+      profile.gold += EQUIPMENT_SALE_GOLD[item.tier];
+    } else {
+      profile.enhancementStones += DUPLICATE_STONE_REWARD[item.tier];
+      profile.equipmentDismantleCount += 1;
+      unlockedPets = unlockEligiblePets(profile);
+    }
+
+    savePlayerProfile(profile);
+    renderLobby();
+    showEquipmentNotice(`${item.name} ${actionText} 완료 · ${rewardText} 획득`);
+    if (unlockedPets.length > 0) showPetNotice(`${unlockedPets.join(', ')} 해금 완료!`);
+  }
+
+  function equipItem(itemId) {
+    const item = EQUIPMENT_DATA[itemId];
+    if (!item) return;
+
+    const profile = loadPlayerProfile();
+    if (!profile.inventory.includes(itemId) || profile.level < item.requiredLevel) return;
+
+    profile.equipped = { ...profile.equipped, [item.slot]: itemId };
+    savePlayerProfile(profile);
+    renderLobby();
+    showEquipmentNotice(`${item.name} 장착 완료`);
+  }
+
+  function levelUpEquipment(itemId) {
+    const item = EQUIPMENT_DATA[itemId];
+    const profile = loadPlayerProfile();
+    if (!item || !profile.inventory.includes(itemId)) return;
+
+    const progress = { ...getEquipmentProgress(profile, itemId) };
+    if (progress.level >= MAX_EQUIPMENT_LEVEL) return;
+
+    const goldCost = getEquipmentLevelUpCost(item, progress.level);
+    if (profile.gold < goldCost) return;
+
+    profile.gold -= goldCost;
+    progress.level += 1;
+    profile.equipmentProgress = { ...profile.equipmentProgress, [itemId]: progress };
+    savePlayerProfile(profile);
+    renderLobby();
+
+    const milestone = progress.level === 25 || progress.level === 50;
+    showEquipmentNotice(`${item.name} 장비 LV.${progress.level} 달성${milestone ? ' · 돌파 보너스 적용!' : ''}`);
+  }
+
+  function enhanceEquipment(itemId) {
+    const item = EQUIPMENT_DATA[itemId];
+    const profile = loadPlayerProfile();
+    if (!item || !profile.inventory.includes(itemId)) return;
+
+    const progress = { ...getEquipmentProgress(profile, itemId) };
+    const rule = getEnhancementRule(progress.enhancement);
+    if (!rule || profile.enhancementStones < rule.stoneCost) return;
+
+    profile.enhancementStones -= rule.stoneCost;
+    const roll = Math.random() * 100;
+    let resultMessage;
+
+    if (roll < rule.successRate) {
+      progress.enhancement += 1;
+      profile.equipmentProgress = { ...profile.equipmentProgress, [itemId]: progress };
+      resultMessage = `${item.name} +${progress.enhancement}강 성공!`;
+    } else if (!STARTER_EQUIPMENT.includes(itemId) && roll < rule.successRate + rule.destroyRate) {
+      profile.inventory = profile.inventory.filter((ownedId) => ownedId !== itemId);
+      profile.equipmentProgress = { ...profile.equipmentProgress };
+      delete profile.equipmentProgress[itemId];
+      if (profile.equipped[item.slot] === itemId) {
+        const fallbackId = profile.inventory.find((ownedId) => EQUIPMENT_DATA[ownedId]?.slot === item.slot);
+        profile.equipped = { ...profile.equipped, [item.slot]: fallbackId || null };
+      }
+      resultMessage = `${item.name} 강화 실패 · 장비 파괴`;
+    } else {
+      resultMessage = `${item.name} 강화 실패 · 강화 수치 유지`;
+    }
+
+    savePlayerProfile(profile);
+    renderLobby();
+    showEquipmentNotice(resultMessage);
+  }
+
+  function rollEquipmentTier(pityCount, playerLevel, roll = Math.random()) {
+    let tier;
+    if (playerLevel >= 40 && pityCount >= LEGENDARY_PITY_LIMIT - 1) tier = 'legendary';
+    else if (roll < BALANCE_CONFIG.chestTierThresholds.common) tier = 'common';
+    else if (roll < BALANCE_CONFIG.chestTierThresholds.rare) tier = 'rare';
+    else if (roll < BALANCE_CONFIG.chestTierThresholds.epic) tier = 'epic';
+    else tier = 'legendary';
+
+    const tierRequiredLevel = { common: 1, rare: 10, epic: 25, legendary: 40 };
+    const availableTiers = Object.keys(tierRequiredLevel).filter((candidate) => playerLevel >= tierRequiredLevel[candidate]);
+    return availableTiers.includes(tier) ? tier : availableTiers[availableTiers.length - 1];
+  }
+
+  function getRandomEquipmentByTier(tier, playerLevel, roll = Math.random()) {
+    const candidates = Object.values(EQUIPMENT_DATA).filter(
+      (item) => item.tier === tier && item.requiredLevel <= playerLevel
+    );
+    const index = Math.min(candidates.length - 1, Math.floor(roll * candidates.length));
+    return candidates[index];
+  }
+
+  function getShopEquipmentPrice(item) {
+    return SHOP_EQUIPMENT_PRICES[item?.tier] || SHOP_EQUIPMENT_PRICES.common;
+  }
+
+  function createShopOffers(profile, random = Math.random) {
+    const eligibleItems = Object.values(EQUIPMENT_DATA).filter(
+      (item) => item.requiredLevel <= profile.level
+    );
+    const unownedItems = eligibleItems.filter((item) => !profile.inventory.includes(item.id));
+    const ownedItems = eligibleItems.filter((item) => profile.inventory.includes(item.id));
+    const pool = unownedItems.length >= 2 ? [...unownedItems] : [...unownedItems, ...ownedItems];
+    const selectedItems = [];
+
+    while (selectedItems.length < 2 && pool.length > 0) {
+      const index = Math.min(pool.length - 1, Math.floor(random() * pool.length));
+      selectedItems.push(pool.splice(index, 1)[0]);
+    }
+
+    const cycle = Math.max(1, Math.floor(profile.shopCycle || 0));
+    const equipmentOffers = selectedItems.map((item, index) => ({
+      id: `equipment-${cycle}-${index}-${item.id}`,
+      type: 'equipment',
+      itemId: item.id,
+      price: getShopEquipmentPrice(item),
+      purchased: false,
+    }));
+    const stoneAmount = 5 + Math.floor((profile.level - 1) / 10) * 2;
+
+    return [
+      ...equipmentOffers,
+      {
+        id: `stones-${cycle}`,
+        type: 'stones',
+        amount: stoneAmount,
+        price: stoneAmount * 100,
+        purchased: false,
+      },
+    ];
+  }
+
+  function refreshShopOffers(profile) {
+    profile.shopCycle = Math.max(0, Math.floor(profile.shopCycle || 0)) + 1;
+    profile.shopBattlesRemaining = SHOP_REFRESH_BATTLES;
+    profile.shopOffers = createShopOffers(profile);
+  }
+
+  function ensureShopState(profile) {
+    const offersAreValid = Array.isArray(profile.shopOffers)
+      && profile.shopOffers.length === 3
+      && profile.shopOffers.every((offer) => {
+        if (!offer || typeof offer.id !== 'string') return false;
+        if (offer.type === 'equipment') return Boolean(EQUIPMENT_DATA[offer.itemId]);
+        return offer.type === 'stones' && Number(offer.amount) > 0;
+      });
+
+    if (!offersAreValid) {
+      refreshShopOffers(profile);
+      return;
+    }
+
+    profile.shopOffers = profile.shopOffers.map((offer) => {
+      if (offer.type === 'equipment') {
+        return {
+          ...offer,
+          price: getShopEquipmentPrice(EQUIPMENT_DATA[offer.itemId]),
+          purchased: offer.purchased === true,
+        };
+      }
+      const amount = Math.max(1, Math.floor(Number(offer.amount) || 1));
+      return { ...offer, amount, price: amount * 100, purchased: offer.purchased === true };
+    });
+  }
+
+  function advanceShopAfterBattle(profile) {
+    if (profile.shopBattlesRemaining <= 1) {
+      refreshShopOffers(profile);
+      return true;
+    }
+    profile.shopBattlesRemaining -= 1;
+    return false;
+  }
+
+  function renderShop(profile) {
+    setLobbyText('equipmentChestPity', profile.equipmentChestPity);
+    setLobbyText('freeEquipmentChests', profile.freeEquipmentChests);
+    setLobbyText('equipmentChestPrice', profile.freeEquipmentChests > 0 ? '무료 상자 사용 가능' : `${EQUIPMENT_CHEST_COST} 골드`);
+    if (openEquipmentChestBtn) {
+      openEquipmentChestBtn.disabled = profile.freeEquipmentChests <= 0 && profile.gold < EQUIPMENT_CHEST_COST;
+      openEquipmentChestBtn.textContent = profile.freeEquipmentChests > 0 ? '무료 상자 열기' : '상자 열기';
+    }
+    setLobbyText('shopRefreshStatus', `${profile.shopBattlesRemaining}판 후 상품 갱신`);
+    if (rotatingShopGrid) {
+      rotatingShopGrid.innerHTML = profile.shopOffers.map((offer) => {
+        if (offer.type === 'equipment') {
+          const item = EQUIPMENT_DATA[offer.itemId];
+          const duplicateText = profile.inventory.includes(item.id) ? '보유 중 · 구매 시 강화석 변환' : `요구 LV.${item.requiredLevel}`;
+          return `
+            <div class="shop-slot ${offer.purchased ? 'sold-out' : ''}">
+              <span>${EQUIPMENT_SLOTS[item.slot]} · ${EQUIPMENT_TIERS[item.tier]}</span>
+              <strong class="equipment-tier-${item.tier}">${item.name}</strong>
+              <p class="shop-item-meta">${formatEquipmentStat(item)}<br />${duplicateText}</p>
+              <p class="shop-price">${offer.price.toLocaleString('ko-KR')} 골드</p>
+              <button type="button" data-shop-offer-id="${offer.id}" ${offer.purchased || profile.gold < offer.price ? 'disabled' : ''}>${offer.purchased ? '판매 완료' : '구매'}</button>
+            </div>`;
+        }
+        return `
+          <div class="shop-slot ${offer.purchased ? 'sold-out' : ''}">
+            <span>성장 재료</span>
+            <strong>강화석 ${offer.amount}개</strong>
+            <p class="shop-item-meta">장비 확률 강화에 사용</p>
+            <p class="shop-price">${offer.price.toLocaleString('ko-KR')} 골드</p>
+            <button type="button" data-shop-offer-id="${offer.id}" ${offer.purchased || profile.gold < offer.price ? 'disabled' : ''}>${offer.purchased ? '판매 완료' : '구매'}</button>
+          </div>`;
+      }).join('');
+    }
+  }
+
+  function showShopNotice(message) {
+    if (shopNotice) shopNotice.textContent = message;
+  }
+
+  function openEquipmentChest() {
+    const profile = loadPlayerProfile();
+    const usesFreeChest = profile.freeEquipmentChests > 0;
+    if (!usesFreeChest && profile.gold < EQUIPMENT_CHEST_COST) {
+      showShopNotice('골드가 부족합니다.');
+      return;
+    }
+
+    if (usesFreeChest) profile.freeEquipmentChests -= 1;
+    else profile.gold -= EQUIPMENT_CHEST_COST;
+    profile.totalEquipmentChests += 1;
+
+    const tier = rollEquipmentTier(profile.equipmentChestPity, profile.level);
+    const item = getRandomEquipmentByTier(tier, profile.level);
+    const isDuplicate = profile.inventory.includes(item.id);
+    let resultMessage;
+
+    if (profile.level >= 40) {
+      if (tier === 'legendary') profile.equipmentChestPity = 0;
+      else profile.equipmentChestPity = Math.min(LEGENDARY_PITY_LIMIT - 1, profile.equipmentChestPity + 1);
+    }
+
+    if (isDuplicate) {
+      const stoneReward = DUPLICATE_STONE_REWARD[tier];
+      profile.enhancementStones += stoneReward;
+      resultMessage = `${EQUIPMENT_TIERS[tier]} ${item.name} 중복 · 강화석 ${stoneReward}개 획득`;
+    } else {
+      profile.inventory = [...profile.inventory, item.id];
+      profile.equipmentProgress = {
+        ...profile.equipmentProgress,
+        [item.id]: { level: 1, enhancement: 0 },
+      };
+      resultMessage = `${EQUIPMENT_TIERS[tier]} ${item.name} 획득!`;
+    }
+
+    savePlayerProfile(profile);
+    renderLobby();
+    showShopNotice(resultMessage);
+  }
+
+  function purchaseShopOffer(offerId) {
+    const profile = loadPlayerProfile();
+    const offer = profile.shopOffers.find((candidate) => candidate.id === offerId);
+    if (!offer || offer.purchased) return;
+    if (profile.gold < offer.price) {
+      showShopNotice('골드가 부족합니다.');
+      return;
+    }
+
+    profile.gold -= offer.price;
+    offer.purchased = true;
+    let resultMessage;
+
+    if (offer.type === 'stones') {
+      profile.enhancementStones += offer.amount;
+      resultMessage = `강화석 ${offer.amount}개 구매 완료`;
+    } else {
+      const item = EQUIPMENT_DATA[offer.itemId];
+      if (profile.inventory.includes(item.id)) {
+        const stoneReward = DUPLICATE_STONE_REWARD[item.tier];
+        profile.enhancementStones += stoneReward;
+        resultMessage = `${item.name} 중복 구매 · 강화석 ${stoneReward}개로 변환`;
+      } else {
+        profile.inventory = [...profile.inventory, item.id];
+        profile.equipmentProgress = {
+          ...profile.equipmentProgress,
+          [item.id]: { level: 1, enhancement: 0 },
+        };
+        resultMessage = `${EQUIPMENT_TIERS[item.tier]} ${item.name} 구매 완료`;
+      }
+    }
+
+    savePlayerProfile(profile);
+    renderLobby();
+    showShopNotice(resultMessage);
+  }
+
+  function renderPets(profile) {
+    if (!petGrid) return;
+
+    petGrid.innerHTML = Object.values(PET_DATA).map((pet) => {
+      const isOwned = profile.ownedPets.includes(pet.id);
+      const isEquipped = profile.equippedPet === pet.id;
+      const progress = getPetProgress(profile, pet.id);
+      const unlockState = getPetUnlockState(profile, pet.id);
+      const requiredExp = getRequiredPetExp(progress.level);
+      const expPercent = progress.level >= MAX_PET_LEVEL ? 100 : Math.min(100, (progress.exp / requiredExp) * 100);
+      return `
+        <div class="pet-card ${isEquipped ? 'equipped' : ''}">
+          <div class="pet-mark"><img src="${pet.portraitImage}" alt="" draggable="false" /></div>
+          <strong>${pet.name} · ${pet.title}</strong>
+          <p>${pet.description}</p>
+          <p>${isOwned ? `펫 LV.${progress.level} · ${progress.level >= MAX_PET_LEVEL ? 'MAX' : `${progress.exp} / ${requiredExp} EXP`}` : unlockState.label}</p>
+          <div class="pet-exp-bar"><div class="pet-exp-fill" style="width:${isOwned ? expPercent : 0}%"></div></div>
+          <button type="button" data-equip-pet-id="${pet.id}" ${!isOwned || isEquipped ? 'disabled' : ''}>${isEquipped ? '동행 중' : isOwned ? '동행하기' : '해금 조건 미달'}</button>
+        </div>`;
+    }).join('');
+  }
+
+  function showPetNotice(message) {
+    if (petNotice) petNotice.textContent = message;
+  }
+
+  function equipPet(petId) {
+    const profile = loadPlayerProfile();
+    if (!profile.ownedPets.includes(petId) || !PET_DATA[petId]) return;
+
+    profile.equippedPet = petId;
+    savePlayerProfile(profile);
+    renderLobby();
+    showPetNotice(`${PET_DATA[petId].name} 동행 시작 · 다음 전투부터 적용`);
+  }
+
+  function renderLobby() {
+    const profile = loadPlayerProfile();
+    savePlayerProfile(profile);
+    const combatStats = getPlayerCombatStats(profile);
+    const attack = combatStats.attack;
+    const combatPower = getCombatPower(profile);
+    const expPercent = Math.min(100, (profile.exp / profile.expMax) * 100);
+
+    setLobbyText('lobbyGold', profile.gold.toLocaleString('ko-KR'));
+    setLobbyText('lobbyStones', profile.enhancementStones.toLocaleString('ko-KR'));
+    setLobbyText('lobbyPlayerLevel', profile.level);
+    setLobbyText('lobbyMaxLevel', profile.maxLevel);
+    setLobbyText('lobbyExp', profile.exp);
+    setLobbyText('lobbyExpMax', profile.expMax);
+    setLobbyText('lobbyPower', combatPower.toLocaleString('ko-KR'));
+    setLobbyText('lobbyAttack', attack);
+    setLobbyText('lobbyMaxHp', profile.maxHp);
+    setLobbyText('lobbyCriticalRate', combatStats.criticalRate);
+    setLobbyText('lobbySwordCount', combatStats.swordCount);
+    renderEquipment(profile);
+    renderShop(profile);
+    renderPets(profile);
+
+    const expFill = document.getElementById('lobbyExpFill');
+    if (expFill) expFill.style.width = `${expPercent}%`;
+  }
+
+  function selectLobbyTab(tabName) {
+    lobbyTabs.forEach((tab) => {
+      tab.classList.toggle('active', tab.dataset.lobbyTab === tabName);
+    });
+    lobbyPanels.forEach((panel) => {
+      panel.classList.toggle('active', panel.dataset.panel === tabName);
+    });
+  }
+
+  function showLobby() {
+    gameRunning = false;
+    isLevelChanging = false;
+    isAutoPaused = false;
+    stopBgm();
+    clearTimers();
+    removeRaidObjects();
+    message.classList.add('hidden');
+    message.innerHTML = '';
+    battleScreen.classList.add('hidden');
+    lobbyScreen.classList.remove('hidden');
+    selectLobbyTab('growth');
+    renderLobby();
+  }
+
+  function enterBattle() {
+    lobbyScreen.classList.add('hidden');
+    battleScreen.classList.remove('hidden');
+    requestAnimationFrame(() => startGame());
+  }
 
 
 
@@ -1314,11 +3131,31 @@ document.addEventListener('DOMContentLoaded', () => {
     return rankings
       .slice()
       .sort((a, b) => {
-        if (b.level !== a.level) return b.level - a.level;
-        if (b.score !== a.score) return b.score - a.score;
+        const stageDifference = (Number(b.level) || 0) - (Number(a.level) || 0);
+        if (stageDifference !== 0) return stageDifference;
+        const scoreDifference = (Number(b.score) || 0) - (Number(a.score) || 0);
+        if (scoreDifference !== 0) return scoreDifference;
+        const aTime = Number(a.elapsedSeconds) > 0 ? Number(a.elapsedSeconds) : Number.MAX_SAFE_INTEGER;
+        const bTime = Number(b.elapsedSeconds) > 0 ? Number(b.elapsedSeconds) : Number.MAX_SAFE_INTEGER;
+        const timeDifference = aTime - bTime;
+        if (timeDifference !== 0) return timeDifference;
+        const powerDifference = (Number(b.combatPower) || 0) - (Number(a.combatPower) || 0);
+        if (powerDifference !== 0) return powerDifference;
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       })
       .slice(0, 10);
+  }
+
+  function getRankingStageLabel(stage) {
+    const safeStage = Math.max(1, Number(stage) || 1);
+    return safeStage <= CAMPAIGN_STAGE_MAX ? `S.${safeStage}` : `INF.${safeStage - CAMPAIGN_STAGE_MAX}`;
+  }
+
+  function formatElapsedTime(totalSeconds) {
+    const safeSeconds = Math.max(0, Math.floor(Number(totalSeconds) || 0));
+    const minutes = Math.floor(safeSeconds / 60);
+    const seconds = safeSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
   }
 
   function getMedal(index) {
@@ -1336,19 +3173,29 @@ document.addEventListener('DOMContentLoaded', () => {
     rank.className = 'rank-medal';
     rank.textContent = getMedal(index);
 
+    const nameWrap = document.createElement('span');
+    nameWrap.className = 'rank-name-wrap';
+
     const name = document.createElement('span');
     name.className = 'rank-name';
     name.textContent = record.nickname;
 
+    const growthInfo = document.createElement('small');
+    const playerLevel = Math.max(1, Number(record.playerLevel) || 1);
+    const combatPower = Math.max(0, Number(record.combatPower) || 0);
+    const elapsedText = Number(record.elapsedSeconds) > 0 ? ` · ${formatElapsedTime(record.elapsedSeconds)}` : '';
+    growthInfo.textContent = `기사 LV.${playerLevel} · 전투력 ${combatPower.toLocaleString('ko-KR')}${elapsedText}${record.petName ? ` · ${record.petName}` : ''}`;
+    nameWrap.append(name, growthInfo);
+
     const levelInfo = document.createElement('span');
     levelInfo.className = 'rank-level';
-    levelInfo.textContent = `LV.${record.level}`;
+    levelInfo.textContent = getRankingStageLabel(record.level);
 
     const scoreInfo = document.createElement('span');
     scoreInfo.className = 'rank-score';
     scoreInfo.textContent = `${record.score}점`;
 
-    item.append(rank, name, levelInfo, scoreInfo);
+    item.append(rank, nameWrap, levelInfo, scoreInfo);
     return item;
   }
 
@@ -1382,9 +3229,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('nicknameInput');
     const nickname = normalizeNickname(input ? input.value : '');
     const record = {
+      recordVersion: 3,
       nickname,
       level: lastRunResult.level,
+      infiniteStage: Math.max(0, lastRunResult.level - CAMPAIGN_STAGE_MAX),
       score: lastRunResult.score,
+      elapsedSeconds: lastRunResult.elapsedSeconds,
+      playerLevel: lastRunResult.playerLevel,
+      combatPower: lastRunResult.combatPower,
+      petName: lastRunResult.petName,
       date: new Date().toISOString(),
     };
 
@@ -1619,21 +3472,102 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getSwordCount() {
-    return Math.min(level, 6);
+    return Math.max(1, activeCombatStats.swordCount);
   }
 
-  function getBossMaxHp() {
-    // 초반 이탈 방지를 위해 LV1~2는 클리어 시간을 살짝 짧게 설정했습니다.
-    // LV3부터는 기존 성장 곡선을 유지해서 무한 레벨 도전의 긴장감을 살립니다.
-    if (level === 1) return 160;
-    if (level === 2) return 360;
+  function getStageConfig(stage = level) {
+    const safeStage = Math.max(1, Math.floor(stage));
+    if (safeStage <= CAMPAIGN_STAGE_MAX) return CAMPAIGN_STAGE_DATA[safeStage];
 
-    const swordCount = getSwordCount();
-    return swordCount * 200 + Math.max(0, level - 1) * 15;
+    const finalStage = CAMPAIGN_STAGE_DATA[CAMPAIGN_STAGE_MAX];
+    const infiniteStage = safeStage - CAMPAIGN_STAGE_MAX;
+    const rules = INFINITE_MODE_RULES;
+    const intervalScale = Math.pow(rules.intervalScalePerStage, infiniteStage);
+    const scalePattern = (pattern, minimum) => pattern ? {
+      ...pattern,
+      interval: Math.max(minimum, Math.round(pattern.interval * intervalScale)),
+    } : null;
+    return {
+      ...finalStage,
+      isFinalTrial: false,
+      isInfinite: true,
+      infiniteStage,
+      baseHp: Math.round((finalStage.baseHp * Math.pow(rules.hpGrowthRate, infiniteStage)) / 10) * 10,
+      difficulty: CAMPAIGN_STAGE_MAX + infiniteStage * 0.4,
+      meteorSpeed: finalStage.meteorSpeed + infiniteStage * rules.meteorSpeedPerStage,
+      sideSpeed: finalStage.sideSpeed + infiniteStage * rules.sideSpeedPerStage,
+      patterns: {
+        topMeteor: {
+          ...scalePattern(finalStage.patterns.topMeteor, rules.minimumIntervals.topMeteor),
+          count: Math.min(
+            rules.maxMeteorCount,
+            finalStage.patterns.topMeteor.count + Math.floor(infiniteStage / rules.extraMeteorEvery)
+          ),
+        },
+        sideMeteor: scalePattern(finalStage.patterns.sideMeteor, rules.minimumIntervals.sideMeteor),
+        floorZone: scalePattern(finalStage.patterns.floorZone, rules.minimumIntervals.floorZone),
+        trackingZone: scalePattern(finalStage.patterns.trackingZone, rules.minimumIntervals.trackingZone),
+        laser: scalePattern(finalStage.patterns.laser, rules.minimumIntervals.laser),
+      },
+      sequences: (finalStage.sequences || []).map((sequence) => ({
+        ...sequence,
+        interval: Math.max(
+          rules.minimumIntervals.sequence,
+          Math.round(sequence.interval * intervalScale)
+        ),
+        actions: sequence.actions.map((action) => ({ ...action })),
+      })),
+    };
+  }
+
+  function getBossDefinition(stage = level) {
+    const stageConfig = getStageConfig(stage);
+    const definition = BOSS_DATA[stageConfig.bossId] || BOSS_DATA.abyss_demon;
+    const campaignStage = Math.min(CAMPAIGN_STAGE_MAX, Math.max(1, Math.floor(stage)));
+    return {
+      ...definition,
+      image: BOSS_STAGE_IMAGES[campaignStage] || definition.image,
+    };
+  }
+
+  function preloadBossImageGroups(stage = level) {
+    const campaignStage = Math.min(CAMPAIGN_STAGE_MAX, Math.max(1, Math.floor(stage)));
+    const groupStart = Math.floor((campaignStage - 1) / 3) * 3 + 1;
+    const preloadEnd = Math.min(CAMPAIGN_STAGE_MAX, groupStart + 5);
+
+    for (let targetStage = groupStart; targetStage <= preloadEnd; targetStage += 1) {
+      const source = BOSS_STAGE_IMAGES[targetStage];
+      if (!source || preloadedBossImages.has(source)) continue;
+      const image = new Image();
+      image.decoding = 'async';
+      image.src = source;
+      preloadedBossImages.add(source);
+    }
+  }
+
+  function getStageDifficulty(stage = level) {
+    return getStageConfig(stage).difficulty;
+  }
+
+  function getStageLabel(stage = level) {
+    if (stage <= CAMPAIGN_STAGE_MAX) return `STAGE ${stage}`;
+    return `INFINITE ${stage - CAMPAIGN_STAGE_MAX}`;
+  }
+
+  function getBossMaxHp(stage = level) {
+    const stageHp = getStageConfig(stage).baseHp;
+    // 성장으로 얻는 화력을 무효화하지 않는 범위에서 보스 체력도 완만하게 보정합니다.
+    const playerGrowthScale = 1
+      + Math.max(0, activeCombatStats.playerLevel - 1) * BALANCE_CONFIG.bossPlayerGrowthHpPerLevel;
+    return Math.round((stageHp * playerGrowthScale) / 10) * 10;
   }
 
   function getTopFallSpeed() {
-    return 5.05 + level * 0.22;
+    return getStageConfig().meteorSpeed;
+  }
+
+  function getSideAttackSpeed() {
+    return getStageConfig().sideSpeed;
   }
 
   function setTimer(callback, delay, isInterval = true) {
@@ -1659,7 +3593,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function removeRaidObjects() {
     document
-      .querySelectorAll('.pattern, .warning-line, .side-warning, .floor-warning, .floor-blast, .tracking-warning, .tracking-blast, .laser-warning, .laser-beam, .sword-wave, .damage-text, .boss-hit-effect, .boss-explosion')
+      .querySelectorAll('.pattern, .warning-line, .side-warning, .floor-warning, .floor-blast, .tracking-warning, .tracking-blast, .laser-warning, .laser-beam, .sword-wave, .pet-projectile, .damage-text, .boss-hit-effect, .boss-explosion, .shield-break-effect')
       .forEach((el) => el.remove());
     hazards = [];
     swords = [];
@@ -1670,14 +3604,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateHud() {
     const swordCount = getSwordCount();
+    const stageConfig = getStageConfig();
+    const bossDefinition = getBossDefinition();
     hpText.textContent = hp;
     scoreText.textContent = score;
     levelText.textContent = level;
     swordCountText.textContent = swordCount;
-    bossName.textContent = `LV.${level} 심연의 마왕`;
+    const encounterName = stageConfig.isFinalTrial ? '종언의 시험' : bossDefinition.name;
+    bossName.textContent = `${getStageLabel()} ${encounterName}`;
+    boss.dataset.bossId = stageConfig.bossId;
+    boss.dataset.mode = stageConfig.isInfinite ? 'infinite' : stageConfig.isFinalTrial ? 'final' : 'campaign';
+    if (bossArt.getAttribute('src') !== bossDefinition.image) bossArt.setAttribute('src', bossDefinition.image);
     bossHpText.textContent = Math.max(0, Math.ceil(bossHp));
     bossMaxHpText.textContent = bossMaxHp;
     bossHpBar.style.width = `${Math.max(0, (bossHp / bossMaxHp) * 100)}%`;
+  }
+
+  function setupPetCompanion() {
+    if (!petCompanion) return;
+    const pet = PET_DATA[activeCombatStats.petId];
+    if (!pet) {
+      petCompanion.className = 'pet-companion hidden';
+      petCompanion.textContent = '';
+      return;
+    }
+
+    petCompanion.className = `pet-companion ${pet.type}`;
+    petCompanion.innerHTML = `<img src="${pet.dungeonImage}" alt="" draggable="false" />`;
+    petCompanion.setAttribute('aria-label', `${pet.name} 동행 중`);
+  }
+
+  function updatePetCompanionPosition() {
+    if (!petCompanion || petCompanion.classList.contains('hidden')) return;
+    petCompanion.style.left = `${Math.max(4, playerX - 50)}px`;
+    petCompanion.style.top = `${playerY + 4}px`;
   }
 
   function resetGame() {
@@ -1687,9 +3647,15 @@ document.addEventListener('DOMContentLoaded', () => {
     isLevelChanging = false;
     lastRunResult = null;
     currentRunSaved = false;
+    currentRunBossKills = 0;
+    currentRunRewards = { exp: 0, gold: 0, enhancementStones: 0, equipmentChests: 0, levelsGained: 0, petExp: 0, petLevelsGained: 0, petExpDiscarded: 0 };
     hp = MAX_HP;
     level = 1;
     score = 0;
+    activeCombatStats = getPlayerCombatStats(loadPlayerProfile());
+    activeShieldCharges = Math.min(1, activeCombatStats.shieldCharges);
+    player.classList.toggle('pet-shield', activeShieldCharges > 0);
+    setupPetCompanion();
     bossMaxHp = getBossMaxHp();
     bossHp = bossMaxHp;
     keys = {};
@@ -1700,15 +3666,21 @@ document.addEventListener('DOMContentLoaded', () => {
     playerY = gameArea.clientHeight - player.clientHeight - 30;
     player.style.left = `${playerX}px`;
     player.style.top = `${playerY}px`;
+    updatePetCompanionPosition();
 
     boss.classList.remove('boss-dead', 'boss-hit');
     clearEffect.classList.add('hidden');
+    preloadBossImageGroups(level);
     updateHud();
   }
 
   function startGame() {
     renderRankings();
-  resetGame();
+    resetGame();
+    isAutoPaused = false;
+    runStartedAt = Date.now();
+    runPausedAt = 0;
+    runPausedDuration = 0;
     startAudioSystem();
     gameRunning = true;
     message.classList.add('hidden');
@@ -1719,16 +3691,28 @@ document.addEventListener('DOMContentLoaded', () => {
   function startLevelTimers() {
     clearTimers(false);
     removeRaidObjects();
+    const stageConfig = getStageConfig();
+    const schedulePattern = (patternConfig, callback) => {
+      if (!patternConfig) return;
+      setTimer(() => {
+        if (!gameRunning || isLevelChanging) return;
+        callback(patternConfig);
+      }, patternConfig.interval);
+    };
 
-    setTimer(() => {
-      if (!gameRunning || isLevelChanging) return;
-      createTopFalls(2);
-    }, Math.max(660, 1080 - level * 34));
+    schedulePattern(stageConfig.patterns.topMeteor, (pattern) => createTopFalls(pattern.count));
 
     setTimer(() => {
       if (!gameRunning || isLevelChanging) return;
       fireSwordWaves();
     }, 850);
+
+    if (activeCombatStats.petAttackDamage > 0 && activeCombatStats.petAttackInterval > 0) {
+      setTimer(() => {
+        if (!gameRunning || isLevelChanging) return;
+        firePetProjectile();
+      }, activeCombatStats.petAttackInterval);
+    }
 
     setTimer(() => {
       if (!gameRunning || isLevelChanging) return;
@@ -1736,38 +3720,60 @@ document.addEventListener('DOMContentLoaded', () => {
       updateHud();
     }, 1000);
 
-    if (level >= 2) {
-      setTimer(() => {
-        if (!gameRunning || isLevelChanging) return;
-        createSideAttack();
-      }, Math.max(1120, 2050 - level * 62));
+    schedulePattern(stageConfig.patterns.sideMeteor, () => createSideAttack());
+    schedulePattern(stageConfig.patterns.floorZone, () => createFloorZone(false));
+    schedulePattern(stageConfig.patterns.trackingZone, () => createFloorZone(true));
+    schedulePattern(stageConfig.patterns.laser, () => createLaser());
+    (stageConfig.sequences || []).forEach((sequence) => {
+      schedulePattern(sequence, () => executeStageSequence(sequence));
+    });
+
+  }
+
+  function executeSequenceAction(action) {
+    const count = Math.max(1, Math.floor(action.count || 1));
+
+    if (action.type === 'topMeteor') {
+      createTopFalls(count);
+      return;
     }
 
-    if (level >= 3) {
-      setTimer(() => {
-        if (!gameRunning || isLevelChanging) return;
-        createFloorZone(false);
-      }, Math.max(1580, 2750 - level * 52));
+    if (action.type === 'sideMeteor') {
+      for (let i = 0; i < count; i += 1) {
+        setTimer(() => createSideAttack(), i * 180, false);
+      }
+      return;
     }
 
-    if (level >= 4) {
-      setTimer(() => {
-        if (!gameRunning || isLevelChanging) return;
-        createFloorZone(true);
-      }, Math.max(2050, 3350 - level * 58));
+    if (action.type === 'floorZone' || action.type === 'trackingZone') {
+      for (let i = 0; i < count; i += 1) {
+        createFloorZone(action.type === 'trackingZone');
+      }
+      return;
     }
 
-    if (level >= 5) {
+    if (action.type === 'laser') {
+      for (let i = 0; i < count; i += 1) {
+        setTimer(() => createLaser(), i * 220, false);
+      }
+    }
+  }
+
+  function executeStageSequence(sequence) {
+    sequence.actions.forEach((action) => {
       setTimer(() => {
         if (!gameRunning || isLevelChanging) return;
-        createLaser();
-      }, Math.max(2950, 5050 - level * 85));
-    }
-
+        executeSequenceAction(action);
+      }, Math.max(0, action.delay || 0), false);
+    });
   }
 
   function gameLoop() {
     if (!gameRunning) return;
+    if (isAutoPaused) {
+      animationId = requestAnimationFrame(gameLoop);
+      return;
+    }
 
     movePlayer();
     moveHazards();
@@ -1792,6 +3798,45 @@ document.addEventListener('DOMContentLoaded', () => {
     playerY = Math.max(minY, Math.min(maxY - 18, playerY));
     player.style.left = `${playerX}px`;
     player.style.top = `${playerY}px`;
+    updatePetCompanionPosition();
+  }
+
+  function clearMovementInput() {
+    keys = {};
+    touchDirections.clear();
+    directionButtons.forEach((button) => button.classList.remove('pressed'));
+  }
+
+  function clampPlayerToArena() {
+    if (!gameArea || !player) return;
+    const maxX = Math.max(0, gameArea.clientWidth - player.clientWidth);
+    const maxY = Math.max(118, gameArea.clientHeight - player.clientHeight - 18);
+    playerX = Math.max(0, Math.min(maxX, playerX));
+    playerY = Math.max(118, Math.min(maxY, playerY));
+    player.style.left = `${playerX}px`;
+    player.style.top = `${playerY}px`;
+    updatePetCompanionPosition();
+  }
+
+  function pauseForAppBackground() {
+    if (!gameRunning || isLevelChanging || isAutoPaused) return;
+    isAutoPaused = true;
+    runPausedAt = Date.now();
+    clearMovementInput();
+    clearTimers(false);
+    removeRaidObjects();
+    clearEffect.textContent = 'PAUSED';
+    clearEffect.classList.remove('hidden');
+  }
+
+  function resumeFromAppBackground() {
+    if (!isAutoPaused) return;
+    if (runPausedAt > 0) runPausedDuration += Date.now() - runPausedAt;
+    runPausedAt = 0;
+    isAutoPaused = false;
+    clearEffect.classList.add('hidden');
+    clampPlayerToArena();
+    if (gameRunning && !isLevelChanging) startLevelTimers();
   }
 
   function createTopFalls(count) {
@@ -1872,7 +3917,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element: pattern,
         x: fromLeft ? -40 : gameArea.clientWidth + 6,
         y,
-        vx: fromLeft ? 5.75 + level * 0.17 : -(5.75 + level * 0.17),
+        vx: fromLeft ? getSideAttackSpeed() : -getSideAttackSpeed(),
         vy: 0,
         hit: false,
         removeOutside: true,
@@ -1951,6 +3996,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 820, false);
   }
 
+  function firePetProjectile() {
+    if (activeCombatStats.petAttackDamage <= 0 || !petCompanion || petCompanion.classList.contains('hidden')) return;
+
+    const areaRect = gameArea.getBoundingClientRect();
+    const bossRect = boss.getBoundingClientRect();
+    const petRect = petCompanion.getBoundingClientRect();
+    const x = petRect.left - areaRect.left + petRect.width / 2 - 12;
+    const y = petRect.top - areaRect.top - 8;
+    const targetX = bossRect.left - areaRect.left + bossRect.width / 2;
+    const targetY = bossRect.top - areaRect.top + bossRect.height / 2;
+    const dx = targetX - x;
+    const dy = targetY - y;
+    const distance = Math.max(Math.hypot(dx, dy), 1);
+    const speed = 8.8;
+
+    const projectile = document.createElement('div');
+    projectile.className = 'pet-projectile';
+    projectile.style.left = `${x}px`;
+    projectile.style.top = `${y}px`;
+    gameArea.appendChild(projectile);
+
+    swords.push({
+      element: projectile,
+      x,
+      y,
+      vx: (dx / distance) * speed,
+      vy: (dy / distance) * speed,
+      hit: false,
+      damage: activeCombatStats.petAttackDamage,
+      isPetAttack: true,
+    });
+  }
+
   function fireSwordWaves() {
     const count = getSwordCount();
     playSwordSlashSound();
@@ -1974,7 +4052,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const dx = targetX - x;
       const dy = targetY - y;
       const distance = Math.max(Math.hypot(dx, dy), 1);
-      const speed = 9.5 + level * 0.08;
+      const speed = 9.5 + Math.min(level, CAMPAIGN_STAGE_MAX) * 0.08;
       const vx = (dx / distance) * speed;
       const vy = (dy / distance) * speed;
       const rotateDeg = Math.atan2(vy, vx) * (180 / Math.PI) + 90;
@@ -2096,9 +4174,35 @@ document.addEventListener('DOMContentLoaded', () => {
     return rect;
   }
 
+  function showShieldBreakEffect() {
+    const areaRect = gameArea.getBoundingClientRect();
+    const playerRect = player.getBoundingClientRect();
+    const effect = document.createElement('div');
+    effect.className = 'shield-break-effect';
+    effect.style.left = `${playerRect.left - areaRect.left + playerRect.width / 2}px`;
+    effect.style.top = `${playerRect.top - areaRect.top + playerRect.height / 2}px`;
+    gameArea.appendChild(effect);
+    setTimer(() => effect.remove(), 440, false);
+  }
+
   function damagePlayer(hazard) {
     if (hazard.hit || isLevelChanging) return;
     hazard.hit = true;
+
+    if (activeShieldCharges > 0) {
+      activeShieldCharges -= 1;
+      player.classList.toggle('pet-shield', activeShieldCharges > 0);
+      player.classList.add('shield-block');
+      showShieldBreakEffect();
+      playTone(740, 0.12, 'sine', 0.24);
+      setTimer(() => player.classList.remove('shield-block'), 260, false);
+      if (hazard.removeOutside) {
+        hazard.element.remove();
+        hazards = hazards.filter((item) => item !== hazard);
+      }
+      return;
+    }
+
     hp -= 1;
     playPlayerHitSound();
     updateHud();
@@ -2125,7 +4229,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function showDamageText(amount) {
+  function showDamageText(amount, isCritical = false) {
     const areaRect = gameArea.getBoundingClientRect();
     const bossRect = boss.getBoundingClientRect();
     accumulatedDamage += amount;
@@ -2136,12 +4240,12 @@ document.addEventListener('DOMContentLoaded', () => {
       gameArea.appendChild(activeDamageText);
     }
 
-    const hitCount = Math.max(1, accumulatedDamage / SWORD_DAMAGE);
-    activeDamageText.textContent = `-${accumulatedDamage}`;
+    const hitCount = Math.max(1, accumulatedDamage / activeCombatStats.attack);
+    activeDamageText.textContent = `${isCritical ? 'CRITICAL ' : ''}-${accumulatedDamage}`;
     activeDamageText.style.left = `${bossRect.left - areaRect.left + bossRect.width / 2}px`;
     activeDamageText.style.top = `${bossRect.top - areaRect.top + 6}px`;
     activeDamageText.style.fontSize = `${Math.min(22 + (hitCount - 1) * 2, 34)}px`;
-    activeDamageText.style.color = hitCount >= 4 ? '#ff9f43' : '#ffef92';
+    activeDamageText.style.color = isCritical ? '#ff5b6e' : hitCount >= 4 ? '#ff9f43' : '#ffef92';
 
     const currentVersion = ++damageDisplayVersion;
     setTimer(() => {
@@ -2175,6 +4279,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimer(() => explosion.remove(), 900, false);
   }
 
+  function rollSwordDamage() {
+    const isCritical = Math.random() * 100 < activeCombatStats.criticalRate;
+    return {
+      amount: activeCombatStats.attack * (isCritical ? 2 : 1),
+      isCritical,
+    };
+  }
+
   function checkSwordCollision() {
     if (isLevelChanging) return;
     const bossRect = getBossHitRect();
@@ -2189,9 +4301,12 @@ document.addEventListener('DOMContentLoaded', () => {
         sword.hit = true;
         sword.element.remove();
         swords.splice(i, 1);
-        bossHp -= SWORD_DAMAGE;
+        const damage = sword.isPetAttack
+          ? { amount: sword.damage, isCritical: false }
+          : rollSwordDamage();
+        bossHp -= damage.amount;
         score += 3 + level;
-        showDamageText(SWORD_DAMAGE);
+        showDamageText(damage.amount, damage.isCritical);
         playBossHitSound();
         boss.classList.add('boss-hit');
         setTimer(() => boss.classList.remove('boss-hit'), 180, false);
@@ -2210,6 +4325,22 @@ document.addEventListener('DOMContentLoaded', () => {
     isLevelChanging = true;
     bossHp = 0;
     score += 500 + level * 120;
+    const rewards = grantBossClearRewards(level, activeCombatStats.petId);
+    currentRunBossKills += 1;
+    currentRunRewards.exp += rewards.exp;
+    currentRunRewards.gold += rewards.gold;
+    currentRunRewards.enhancementStones += rewards.enhancementStones;
+    currentRunRewards.equipmentChests += rewards.equipmentChests;
+    currentRunRewards.levelsGained += rewards.levelsGained;
+    currentRunRewards.petExp += rewards.petExp;
+    if (
+      activeCombatStats.shieldRechargeRate > 0 &&
+      activeShieldCharges === 0 &&
+      Math.random() * 100 < activeCombatStats.shieldRechargeRate
+    ) {
+      activeShieldCharges = Math.min(1, activeShieldCharges + 1);
+      player.classList.toggle('pet-shield', activeShieldCharges > 0);
+    }
     playBossClearSound();
     updateHud();
     clearTimers(false);
@@ -2218,16 +4349,18 @@ document.addEventListener('DOMContentLoaded', () => {
     showBossExplosion();
     boss.classList.add('boss-dead');
     clearEffect.classList.remove('hidden');
-    clearEffect.textContent = `LEVEL ${level} BOSS CLEAR!`;
+    const petUnlockText = rewards.unlockedPets.length > 0 ? ` · ${rewards.unlockedPets.join(', ')} 해금!` : '';
+    clearEffect.textContent = `${getStageLabel()} BOSS CLEAR!${petUnlockText}`;
 
     setTimer(() => {
       if (!gameRunning) return;
       level += 1;
+      preloadBossImageGroups(level);
       bossMaxHp = getBossMaxHp();
       bossHp = bossMaxHp;
       hp = Math.min(MAX_HP, hp + 1);
       updateHud();
-      clearEffect.textContent = `LEVEL ${level} START!`;
+      clearEffect.textContent = `${getStageLabel()} START!`;
       playLevelStartSound();
     }, 1200, false);
 
@@ -2244,7 +4377,33 @@ document.addEventListener('DOMContentLoaded', () => {
   function endGame() {
     gameRunning = false;
     isLevelChanging = false;
-    lastRunResult = { level, score };
+    const petSettlement = settlePetExperience(
+      activeCombatStats.petId,
+      currentRunRewards.petExp,
+      currentRunBossKills
+    );
+    currentRunRewards.petExp = petSettlement.petExp;
+    currentRunRewards.petLevelsGained = petSettlement.petLevelsGained;
+    currentRunRewards.petExpDiscarded = petSettlement.petExpDiscarded;
+    const finalProfile = loadPlayerProfile();
+    const shopRefreshed = advanceShopAfterBattle(finalProfile);
+    savePlayerProfile(finalProfile);
+    const finalPet = PET_DATA[finalProfile.equippedPet];
+    const currentPauseDuration = runPausedAt > 0 ? Date.now() - runPausedAt : 0;
+    const elapsedSeconds = Math.max(
+      1,
+      Math.round((Date.now() - runStartedAt - runPausedDuration - currentPauseDuration) / 1000)
+    );
+    lastRunResult = {
+      level,
+      score,
+      elapsedSeconds,
+      playerLevel: finalProfile.level,
+      combatPower: getCombatPower(finalProfile),
+      petName: finalPet?.name || '',
+      shopRefreshed,
+      rewards: { ...currentRunRewards },
+    };
     currentRunSaved = false;
     stopBgm();
     clearTimers();
@@ -2255,7 +4414,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="start-card result-card ranking-result-card">
         <p class="raid-label">RAID FAILED</p>
         <h2>기사 전투 불능</h2>
-        <p class="desc">도달 레벨: ${level}<br />최종 점수: ${score}</p>
+        <p class="desc">도달 단계: ${getStageLabel(level)}<br />처치 보스: ${currentRunBossKills}마리<br />플레이 시간: ${formatElapsedTime(elapsedSeconds)}<br />최종 점수: ${score}${shopRefreshed ? '<br />상점 상품이 갱신되었습니다.' : ''}</p>
+        <p class="desc">획득 경험치: ${currentRunRewards.exp}<br />획득 골드: ${currentRunRewards.gold}<br />획득 강화석: ${currentRunRewards.enhancementStones}${currentRunRewards.equipmentChests > 0 ? `<br />획득 장비 상자: ${currentRunRewards.equipmentChests}개` : ''}<br />펫 경험치: ${currentRunRewards.petExp}${currentRunRewards.petExpDiscarded > 0 ? ` (${currentRunRewards.petExpDiscarded} EXP 미정산 · 보스 3마리 필요)` : ''}${currentRunRewards.levelsGained > 0 ? `<br />기사 레벨 상승: +${currentRunRewards.levelsGained}` : ''}${currentRunRewards.petLevelsGained > 0 ? `<br />펫 레벨 상승: +${currentRunRewards.petLevelsGained}` : ''}</p>
 
         <div id="rankingSaveArea" class="ranking-save-area">
           <label for="nicknameInput">닉네임 입력</label>
@@ -2271,7 +4431,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <ol id="resultRankingList" class="ranking-list compact-ranking"></ol>
         </div>
 
-        <button id="restartBtn" type="button">다시 도전</button>
+        <div class="result-actions">
+          <button id="lobbyBtn" type="button">로비로</button>
+          <button id="restartBtn" type="button">다시 도전</button>
+        </div>
       </div>
     `;
     renderRankings();
@@ -2295,12 +4458,76 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  lobbyTabs.forEach((tab) => {
+    tab.addEventListener('click', () => selectLobbyTab(tab.dataset.lobbyTab));
+  });
+
+  if (equipmentPanel) {
+    equipmentPanel.addEventListener('click', (event) => {
+      const equipButton = event.target.closest('[data-equip-id]');
+      if (equipButton && !equipButton.disabled) {
+        equipItem(equipButton.dataset.equipId);
+        return;
+      }
+
+      const levelUpButton = event.target.closest('[data-level-up-id]');
+      if (levelUpButton && !levelUpButton.disabled) {
+        levelUpEquipment(levelUpButton.dataset.levelUpId);
+        return;
+      }
+
+      const enhanceButton = event.target.closest('[data-enhance-id]');
+      if (enhanceButton && !enhanceButton.disabled) {
+        enhanceEquipment(enhanceButton.dataset.enhanceId);
+        return;
+      }
+
+      const sellButton = event.target.closest('[data-sell-id]');
+      if (sellButton && !sellButton.disabled) {
+        disposeEquipment(sellButton.dataset.sellId, 'sell');
+        return;
+      }
+
+      const dismantleButton = event.target.closest('[data-dismantle-id]');
+      if (dismantleButton && !dismantleButton.disabled) {
+        disposeEquipment(dismantleButton.dataset.dismantleId, 'dismantle');
+      }
+    });
+  }
+
+  if (openEquipmentChestBtn) {
+    openEquipmentChestBtn.addEventListener('click', openEquipmentChest);
+  }
+
+  if (shopPanel) {
+    shopPanel.addEventListener('click', (event) => {
+      const offerButton = event.target.closest('[data-shop-offer-id]');
+      if (offerButton && !offerButton.disabled) purchaseShopOffer(offerButton.dataset.shopOfferId);
+    });
+  }
+
+  if (petPanel) {
+    petPanel.addEventListener('click', (event) => {
+      const equipPetButton = event.target.closest('[data-equip-pet-id]');
+      if (equipPetButton && !equipPetButton.disabled) equipPet(equipPetButton.dataset.equipPetId);
+    });
+  }
+
+  if (enterBattleBtn) {
+    enterBattleBtn.addEventListener('click', enterBattle);
+  }
+
   loadAudioSettings();
   updateAudioLevels(false);
 
   message.addEventListener('click', (event) => {
     if (event.target.id === 'saveRankBtn') {
       saveCurrentRunToRanking();
+      return;
+    }
+
+    if (event.target.id === 'lobbyBtn') {
+      showLobby();
       return;
     }
 
@@ -2323,7 +4550,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
     }
 
-    if (event.code === 'Space' && !gameRunning) {
+    if (event.code === 'Space' && !gameRunning && !battleScreen.classList.contains('hidden')) {
       startGame();
     }
   });
@@ -2356,14 +4583,36 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window.addEventListener('blur', () => {
-    keys = {};
-    touchDirections.clear();
-    directionButtons.forEach((button) => button.classList.remove('pressed'));
+    clearMovementInput();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pauseForAppBackground();
+    else resumeFromAppBackground();
+  });
+
+  window.addEventListener('resize', () => {
+    if (gameRunning) clampPlayerToArena();
+  });
+
+  window.addEventListener('pagehide', () => {
+    clearMovementInput();
+    saveAudioSettings();
   });
 
   renderRankings();
+  renderLobby();
   resetGame();
 });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((error) => {
+          console.warn('Service worker registration failed:', error);
+        });
+      });
+    }
   </script>
 </body>
 </html>
