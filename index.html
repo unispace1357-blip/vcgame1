@@ -264,7 +264,90 @@ h1 {
   background: url('./asset/knight.png') center / contain no-repeat;
   image-rendering: pixelated;
   filter: drop-shadow(0 0 7px rgba(74, 163, 255, 0.8));
+  overflow: visible;
   z-index: 5;
+}
+
+.player-weapon {
+  position: absolute;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  transform-origin: 18% 78%;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0.98;
+  transition: filter 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.player-weapon.weapon-skin-base {
+  background-image: url('./asset/player_weapon_base.png');
+}
+
+.player-weapon.weapon-skin-blue {
+  background-image: url('./asset/player_weapon_blue.png');
+}
+
+.player-weapon.weapon-skin-red {
+  background-image: url('./asset/player_weapon_red.png');
+}
+
+.player-weapon.weapon-tier-common {
+  width: 32px;
+  height: 32px;
+  left: 19px;
+  top: 15px;
+  transform: rotate(19deg);
+  filter:
+    drop-shadow(0 1px 3px rgba(0, 0, 0, 0.56))
+    drop-shadow(0 0 4px rgba(211, 225, 244, 0.18));
+}
+
+.player-weapon.weapon-tier-rare {
+  width: 34px;
+  height: 34px;
+  left: 19px;
+  top: 14px;
+  transform: rotate(18deg);
+  filter:
+    drop-shadow(0 1px 3px rgba(0, 0, 0, 0.58))
+    drop-shadow(0 0 5px rgba(255, 213, 121, 0.28));
+}
+
+.player-weapon.weapon-tier-epic {
+  width: 37px;
+  height: 37px;
+  left: 18px;
+  top: 12px;
+  transform: rotate(16deg);
+  filter:
+    drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6))
+    drop-shadow(0 0 6px rgba(100, 166, 255, 0.4));
+}
+
+.player-weapon.weapon-tier-legendary {
+  width: 40px;
+  height: 40px;
+  left: 18px;
+  top: 10px;
+  transform: rotate(14deg);
+  filter:
+    drop-shadow(0 1px 4px rgba(0, 0, 0, 0.64))
+    drop-shadow(0 0 7px rgba(255, 108, 88, 0.46));
+}
+
+.player-weapon.weapon-aura-blue {
+  filter:
+    drop-shadow(0 1px 4px rgba(0, 0, 0, 0.62))
+    drop-shadow(0 0 8px rgba(86, 182, 255, 0.78))
+    drop-shadow(0 0 14px rgba(76, 136, 255, 0.52));
+}
+
+.player-weapon.weapon-aura-red {
+  filter:
+    drop-shadow(0 1px 4px rgba(0, 0, 0, 0.66))
+    drop-shadow(0 0 10px rgba(255, 91, 91, 0.88))
+    drop-shadow(0 0 17px rgba(255, 159, 71, 0.58));
 }
 
 .player.damaged {
@@ -505,11 +588,53 @@ h1 {
   height: 46px;
   background: url('./asset/sword_wave.png') center / contain no-repeat;
   image-rendering: pixelated;
-  filter:
-    drop-shadow(0 0 5px rgba(255, 218, 92, 0.95))
-    drop-shadow(0 0 10px rgba(255, 96, 20, 0.65));
   transform-origin: 50% 50%;
   z-index: 4;
+  transition: filter 0.15s ease, opacity 0.15s ease;
+}
+
+.sword-wave.tier-common {
+  width: 40px;
+  height: 40px;
+  filter:
+    drop-shadow(0 0 4px rgba(245, 245, 255, 0.8))
+    drop-shadow(0 0 9px rgba(122, 178, 255, 0.28));
+}
+
+.sword-wave.tier-rare {
+  width: 43px;
+  height: 43px;
+  filter:
+    drop-shadow(0 0 5px rgba(255, 229, 125, 0.92))
+    drop-shadow(0 0 10px rgba(255, 168, 48, 0.45));
+}
+
+.sword-wave.tier-epic {
+  width: 47px;
+  height: 47px;
+  filter:
+    drop-shadow(0 0 6px rgba(135, 220, 255, 0.96))
+    drop-shadow(0 0 12px rgba(94, 116, 255, 0.52));
+}
+
+.sword-wave.tier-legendary {
+  width: 52px;
+  height: 52px;
+  filter:
+    drop-shadow(0 0 7px rgba(255, 210, 107, 0.96))
+    drop-shadow(0 0 14px rgba(255, 85, 58, 0.62));
+}
+
+.sword-wave.aura-blue {
+  filter:
+    drop-shadow(0 0 8px rgba(140, 231, 255, 0.98))
+    drop-shadow(0 0 15px rgba(66, 134, 255, 0.62));
+}
+
+.sword-wave.aura-red {
+  filter:
+    drop-shadow(0 0 9px rgba(255, 224, 136, 0.98))
+    drop-shadow(0 0 16px rgba(255, 82, 55, 0.72));
 }
 
 .homing-sword::before {
@@ -1773,6 +1898,172 @@ button:hover {
     width: 100%;
   }
 }
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(4px);
+}
+.tutorial-card {
+  width: min(620px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 24px 22px;
+  border: 1px solid rgba(255, 206, 82, 0.52);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(20, 8, 8, 0.96), rgba(6, 6, 6, 0.96));
+  box-shadow: 0 0 36px rgba(255, 0, 0, 0.2), inset 0 0 22px rgba(255, 206, 82, 0.06);
+}
+.tutorial-card h2 { color: #ffce52; margin: 4px 0 12px; font-size: 28px; }
+.tutorial-card ol { margin: 14px 0 18px 20px; line-height: 1.7; color: #eeeeee; }
+.tutorial-card li + li { margin-top: 7px; }
+.tutorial-card strong { color: #ffce52; }
+.tutorial-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.tutorial-skip-btn { background: rgba(255, 255, 255, 0.12); box-shadow: none; }
+.tutorial-open-btn { padding: 11px 18px; font-size: 15px; background: linear-gradient(135deg, #3f2c12, #9d6e19); }
+@media (max-width: 700px) {
+  .tutorial-card { padding: 18px 14px; }
+  .tutorial-card h2 { font-size: 23px; }
+  .tutorial-actions { flex-direction: column; }
+}
+
+
+.chest-result-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.74);
+  backdrop-filter: blur(4px);
+}
+
+.chest-result-card {
+  width: min(520px, 94vw);
+  padding: 26px 22px 22px;
+  border: 1px solid rgba(255, 206, 82, 0.56);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top, rgba(255, 206, 82, 0.12), transparent 36%),
+    linear-gradient(180deg, rgba(24, 8, 8, 0.98), rgba(7, 7, 7, 0.98));
+  box-shadow:
+    0 0 42px rgba(255, 0, 0, 0.24),
+    inset 0 0 26px rgba(255, 206, 82, 0.08);
+  text-align: center;
+}
+
+.chest-result-card h2 {
+  margin: 8px 0 10px;
+  color: #ffce52;
+  font-size: 30px;
+  text-shadow: 0 0 16px rgba(255, 206, 82, 0.35);
+}
+
+.chest-result-glow {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 8px;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(255, 206, 82, 0.26), rgba(120, 0, 0, 0.18) 58%, rgba(0, 0, 0, 0.1));
+  border: 1px solid rgba(255, 206, 82, 0.45);
+  box-shadow: 0 0 28px rgba(255, 206, 82, 0.2);
+  font-size: 46px;
+  animation: chestResultPop 0.55s ease both;
+}
+
+.chest-result-card.legendary .chest-result-glow {
+  box-shadow: 0 0 38px rgba(255, 206, 82, 0.48), 0 0 60px rgba(255, 55, 55, 0.22);
+}
+
+.chest-result-card.epic .chest-result-glow {
+  box-shadow: 0 0 34px rgba(130, 108, 255, 0.42);
+}
+
+.chest-result-item {
+  margin: 10px 0 8px;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.chest-result-desc {
+  margin: 10px 0 14px;
+  color: #d8d8d8;
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+.chest-result-meta {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0 16px;
+  text-align: left;
+}
+
+.chest-result-meta span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #cfcfcf;
+  font-size: 13px;
+}
+
+.chest-result-meta strong {
+  color: #ffce52;
+}
+
+.chest-result-card button {
+  width: 100%;
+  margin-top: 2px;
+}
+
+@keyframes chestResultPop {
+  from { transform: scale(0.72); opacity: 0.2; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 700px) {
+  .chest-result-card { padding: 22px 15px 18px; }
+  .chest-result-card h2 { font-size: 25px; }
+  .chest-result-glow { width: 82px; height: 82px; font-size: 38px; }
+}
+
+.batch-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 8px;
+}
+.batch-actions button {
+  padding: 9px 14px;
+  font-size: 13px;
+  background: linear-gradient(135deg, #3f2c12, #8d6419);
+}
+.power-guide {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 206, 82, 0.22);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #e9e9e9;
+  font-size: 13px;
+}
+.power-guide strong { color: #ffce52; }
+
   </style>
 </head>
 <body>
@@ -1804,6 +2095,7 @@ button:hover {
             <div id="lobbyExpFill" class="exp-fill"></div>
           </div>
           <div class="combat-power">전투력 <strong id="lobbyPower">100</strong></div>
+          <div class="power-guide">다음 보스 권장 전투력 <strong id="recommendedPower">100</strong> · <span id="powerDifficulty">적정</span></div>
         </div>
       </section>
 
@@ -1827,6 +2119,11 @@ button:hover {
         </div>
         <div id="equippedSlots" class="equipment-grid"></div>
         <h4 class="inventory-heading">보유 장비</h4>
+        <p class="equipment-notice static-equipment-note">골드 레벨업은 슬롯에 적용되어 장비를 바꿔도 유지됩니다. 분해 시 강화석 일부 환급 · +7강부터 실패 시 강화 수치 -1 · 치명타/획득 보너스 상한 적용</p>
+        <div class="batch-actions" aria-label="장비 일괄 분해">
+          <button type="button" data-batch-dismantle-tier="common">커먼 일괄 분해</button>
+          <button type="button" data-batch-dismantle-tier="rare">레어 이하 일괄 분해</button>
+        </div>
         <div id="equipmentInventory" class="equipment-inventory"></div>
         <p id="equipmentNotice" class="equipment-notice" aria-live="polite"></p>
       </section>
@@ -1841,19 +2138,19 @@ button:hover {
             <span>장비 상자</span>
             <strong>심연 장비 상자</strong>
             <p id="equipmentChestPrice" class="shop-price">500 골드</p>
-            <p class="shop-detail">커먼 60% · 레어 30%<br />에픽 9% · 레전더리 1%</p>
+            <p class="shop-detail">커먼 60% · 레어 30%<br />에픽 8% · 레전더리 2%</p>
             <button id="openEquipmentChestBtn" type="button">상자 열기</button>
             <p class="shop-detail">보유 무료 상자: <strong id="freeEquipmentChests">0</strong>개</p>
           </div>
           <div class="shop-slot">
             <span>레전더리 천장</span>
             <strong><span id="equipmentChestPity">0</span> / 30</strong>
-            <p class="shop-price">Lv.40 상자 30번째 확정</p>
+            <p class="shop-price">확정까지 <span id="equipmentChestPityRemaining">30</span>회</p>
             <p class="shop-detail">플레이어 Lv.40부터 누적되며 레전더리 획득 시 초기화됩니다.</p>
           </div>
           <div class="shop-slot">
             <span>중복 장비 변환</span>
-            <strong>강화석 환급</strong>
+            <strong>중복 시 강화석 변환</strong>
             <p class="shop-price">커먼 1 · 레어 3 · 에픽 8 · 레전더리 20</p>
             <p class="shop-detail">이미 보유한 장비는 자동으로 강화석으로 변환됩니다.</p>
           </div>
@@ -1888,8 +2185,41 @@ button:hover {
         <button class="lobby-tab" type="button" data-lobby-tab="pet">펫</button>
         <button class="lobby-tab" type="button" data-lobby-tab="shop">상점</button>
       </nav>
+      <button id="openTutorialBtn" class="tutorial-open-btn" type="button">튜토리얼</button>
       <button id="enterBattleBtn" class="battle-entry-btn" type="button">심연의 마왕에게 도전</button>
     </footer>
+  </section>
+
+  <section id="tutorialOverlay" class="tutorial-overlay hidden" aria-label="튜토리얼">
+    <div class="tutorial-card">
+      <p class="eyebrow">FIRST GUIDE</p>
+      <h2>처음 시작 가이드</h2>
+      <ol>
+        <li><strong>전투 입장</strong>으로 보스를 처치해 골드, 강화석, 경험치, 장비 상자를 얻습니다.</li>
+        <li><strong>골드</strong>는 장비가 아니라 무기·장갑·반지·목걸이 <strong>슬롯 레벨</strong>을 올립니다. 장비를 바꿔도 유지됩니다.</li>
+        <li><strong>강화석</strong>은 개별 장비 강화에 사용합니다. +7강부터 실패하면 장비가 파괴되지 않고 <strong>강화 수치가 -1</strong> 됩니다.</li>
+        <li><strong>분해</strong>하면 기본 강화석과 강화에 사용한 강화석 일부를 돌려받습니다.</li>
+        <li><strong>보유 장비</strong>는 지금 착용할 수 있는 장비가 먼저 보이도록 정렬되며, 커먼/레어 이하 일괄 분해를 사용할 수 있습니다.</li>
+        <li><strong>전투력 안내</strong>로 다음 보스 난이도를 확인하고 부족하면 슬롯 레벨업, 장비 강화, 펫 장착을 진행하세요.</li>
+        <li><strong>목표</strong>는 15단계 보스를 클리어하고 무한 단계에서 랭킹을 올리는 것입니다.</li>
+      </ol>
+      <div class="tutorial-actions">
+        <button id="skipTutorialBtn" class="tutorial-skip-btn" type="button">다시 보지 않기</button>
+        <button id="closeTutorialBtn" type="button">확인</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="chestResultOverlay" class="chest-result-overlay hidden" aria-label="장비 상자 결과" role="dialog" aria-modal="true">
+    <div id="chestResultCard" class="chest-result-card">
+      <p class="eyebrow">CHEST RESULT</p>
+      <div id="chestResultIcon" class="chest-result-glow">🎁</div>
+      <h2 id="chestResultTitle">장비 상자 결과</h2>
+      <p id="chestResultItem" class="chest-result-item">-</p>
+      <p id="chestResultDesc" class="chest-result-desc">-</p>
+      <div id="chestResultMeta" class="chest-result-meta"></div>
+      <button id="closeChestResultBtn" type="button">확인</button>
+    </div>
   </section>
 
   <section id="battleScreen" class="battle-screen hidden" aria-label="전투 화면">
@@ -1924,7 +2254,7 @@ button:hover {
 
     <section class="boss-ui">
       <div class="boss-info">
-        <span id="bossName">LV.1 심연의 마왕</span>
+        <span id="bossName">STAGE 1 어비스 슬라임</span>
         <span><strong id="bossHpText">200</strong> / <span id="bossMaxHpText">200</span></span>
       </div>
       <div class="boss-hp-bar">
@@ -1940,7 +2270,7 @@ button:hover {
       </div>
 
       <div id="clearEffect" class="clear-effect hidden">BOSS CLEAR!</div>
-      <div id="player" class="player knight"></div>
+      <div id="player" class="player knight"><div id="playerWeapon" class="player-weapon weapon-base" aria-hidden="true"></div></div>
       <div id="petCompanion" class="pet-companion hidden" aria-label="동행 펫"></div>
 
       <div id="message" class="message hidden"></div>
@@ -1982,6 +2312,7 @@ button:hover {
 document.addEventListener('DOMContentLoaded', () => {
   const gameArea = document.getElementById('gameArea');
   const player = document.getElementById('player');
+  const playerWeapon = document.getElementById('playerWeapon');
   const petCompanion = document.getElementById('petCompanion');
   const boss = document.getElementById('boss');
   const bossArt = boss.querySelector('.boss-art');
@@ -2003,6 +2334,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const lobbyScreen = document.getElementById('lobbyScreen');
   const battleScreen = document.getElementById('battleScreen');
   const enterBattleBtn = document.getElementById('enterBattleBtn');
+  const openTutorialBtn = document.getElementById('openTutorialBtn');
+  const tutorialOverlay = document.getElementById('tutorialOverlay');
+  const closeTutorialBtn = document.getElementById('closeTutorialBtn');
+  const skipTutorialBtn = document.getElementById('skipTutorialBtn');
   const lobbyTabs = document.querySelectorAll('[data-lobby-tab]');
   const lobbyPanels = document.querySelectorAll('[data-panel]');
   const equipmentPanel = document.getElementById('equipmentPanel');
@@ -2011,6 +2346,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const equipmentNotice = document.getElementById('equipmentNotice');
   const shopPanel = document.getElementById('shopPanel');
   const openEquipmentChestBtn = document.getElementById('openEquipmentChestBtn');
+  const chestResultOverlay = document.getElementById('chestResultOverlay');
+  const chestResultCard = document.getElementById('chestResultCard');
+  const chestResultIcon = document.getElementById('chestResultIcon');
+  const chestResultTitle = document.getElementById('chestResultTitle');
+  const chestResultItem = document.getElementById('chestResultItem');
+  const chestResultDesc = document.getElementById('chestResultDesc');
+  const chestResultMeta = document.getElementById('chestResultMeta');
+  const closeChestResultBtn = document.getElementById('closeChestResultBtn');
   const rotatingShopGrid = document.getElementById('rotatingShopGrid');
   const shopNotice = document.getElementById('shopNotice');
   const petPanel = document.getElementById('petPanel');
@@ -2026,6 +2369,23 @@ document.addEventListener('DOMContentLoaded', () => {
       name: '심연의 마왕',
       image: './asset/bosses/optimized/stage01_abyss_slime.webp',
     },
+  };
+  const BOSS_STAGE_NAMES = {
+    1: '어비스 슬라임',
+    2: '분노한 어비스 슬라임',
+    3: '침식된 어비스 슬라임',
+    4: '균열의 갑주 골렘',
+    5: '붉은 핵의 갑주 골렘',
+    6: '폭주하는 균열 골렘',
+    7: '심연의 마수',
+    8: '각성한 심연의 마수',
+    9: '포식하는 심연의 마수',
+    10: '마왕의 대사제',
+    11: '금단의 대사제',
+    12: '심연을 부르는 대사제',
+    13: '마왕의 현신',
+    14: '각성한 마왕',
+    15: '종언의 마왕',
   };
   const BOSS_STAGE_IMAGES = {
     1: './asset/bosses/optimized/stage01_abyss_slime.webp',
@@ -2092,13 +2452,14 @@ document.addEventListener('DOMContentLoaded', () => {
       minimumBossKills: 3,
     },
     equipment: {
-      levelBaseCost: { common: 80, rare: 160, epic: 300, legendary: 520 },
-      levelCostGrowth: 0.15,
+      slotLevelBaseCost: { weapon: 90, gloves: 80, ring: 85, necklace: 85 },
+      slotLevelCostGrowth: 0.14,
       enhancementStoneCosts: [1, 1, 2, 2, 3, 4, 5, 6, 8, 10],
       enhancementSuccessRates: [100, 95, 90, 85, 75, 65, 55, 45, 35, 25],
-      enhancementDestroyRates: [0, 0, 0, 0, 0, 0, 0, 5, 10, 15],
+      enhancementDowngradeFrom: 7,
+      dismantleEnhancementRefundRate: 0.7,
     },
-    chestTierThresholds: { common: 0.6, rare: 0.9, epic: 0.99 },
+    chestTierThresholds: { common: 0.6, rare: 0.9, epic: 0.98 },
     bossPlayerGrowthHpPerLevel: 0.01,
   };
   const battleBgm = new Audio('./asset/audio/battle_bgm.mp3');
@@ -2173,7 +2534,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const AUDIO_STORAGE_KEY = 'dungeonRaidAudioSettings';
   const RANKING_STORAGE_KEY = 'dungeonRaidRankings';
   const PLAYER_PROFILE_STORAGE_KEY = 'abyssRaidPlayerProfileV1';
-  const PLAYER_SAVE_VERSION = 14;
+  const PLAYER_SAVE_VERSION = 15;
   const MAX_EQUIPMENT_LEVEL = 50;
   const MAX_ENHANCEMENT = 10;
   const EQUIPMENT_CHEST_COST = 500;
@@ -2181,6 +2542,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const MAX_PET_LEVEL = 5;
   const SHOP_REFRESH_BATTLES = 3;
   const SHOP_EQUIPMENT_PRICES = { common: 350, rare: 900, epic: 2400, legendary: 6000 };
+  const MAX_CRITICAL_RATE = 50;
+  const MAX_RESOURCE_BONUS_RATE = 100;
 
   const EQUIPMENT_SLOTS = {
     weapon: '무기',
@@ -2252,12 +2615,20 @@ document.addEventListener('DOMContentLoaded', () => {
       ring: 'ring_common_1',
       necklace: 'necklace_common_1',
     },
+    slotLevels: {
+      weapon: 1,
+      gloves: 1,
+      ring: 1,
+      necklace: 1,
+    },
     equipmentProgress: {},
+    lockedEquipment: [],
     equipmentChestPity: 0,
     totalEquipmentChests: 0,
     freeEquipmentChests: 0,
     highestBossStage: 0,
     equipmentDismantleCount: 0,
+    claimedFirstClearBonuses: [],
     shopOffers: [],
     shopBattlesRemaining: SHOP_REFRESH_BATTLES,
     shopCycle: 0,
@@ -2271,7 +2642,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ...DEFAULT_PLAYER_PROFILE,
       inventory: [...DEFAULT_PLAYER_PROFILE.inventory],
       equipped: { ...DEFAULT_PLAYER_PROFILE.equipped },
+      slotLevels: { ...DEFAULT_PLAYER_PROFILE.slotLevels },
       equipmentProgress: { ...DEFAULT_PLAYER_PROFILE.equipmentProgress },
+      lockedEquipment: [...DEFAULT_PLAYER_PROFILE.lockedEquipment],
+      claimedFirstClearBonuses: [...DEFAULT_PLAYER_PROFILE.claimedFirstClearBonuses],
       shopOffers: DEFAULT_PLAYER_PROFILE.shopOffers.map((offer) => ({ ...offer })),
       ownedPets: [...DEFAULT_PLAYER_PROFILE.ownedPets],
       petProgress: Object.fromEntries(
@@ -2324,7 +2698,7 @@ document.addEventListener('DOMContentLoaded', () => {
       inventory.forEach((itemId) => {
         const savedProgress = saved.equipmentProgress && saved.equipmentProgress[itemId];
         equipmentProgress[itemId] = {
-          level: Math.floor(readProfileNumber(savedProgress?.level, 1, 1, MAX_EQUIPMENT_LEVEL)),
+          level: 1,
           enhancement: Math.floor(readProfileNumber(savedProgress?.enhancement, 0, 0, MAX_ENHANCEMENT)),
         };
       });
@@ -2332,6 +2706,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!saved.equipmentProgress && Number(saved.weaponLevel) > 1) {
         equipmentProgress.weapon_common_1.enhancement = Math.min(MAX_ENHANCEMENT, Number(saved.weaponLevel) - 1);
       }
+
+      const lockedEquipment = Array.isArray(saved.lockedEquipment)
+        ? saved.lockedEquipment.filter((itemId) => inventory.includes(itemId))
+        : inventory.filter((itemId) => EQUIPMENT_DATA[itemId]?.tier === 'legendary');
+
+      const slotLevels = { ...DEFAULT_PLAYER_PROFILE.slotLevels };
+      Object.keys(EQUIPMENT_SLOTS).forEach((slot) => {
+        if (saved.slotLevels && Number.isFinite(Number(saved.slotLevels[slot]))) {
+          slotLevels[slot] = Math.floor(readProfileNumber(saved.slotLevels[slot], 1, 1, MAX_EQUIPMENT_LEVEL));
+          return;
+        }
+
+        const migratedLevel = inventory.reduce((maxLevel, ownedId) => {
+          const ownedItem = EQUIPMENT_DATA[ownedId];
+          const savedProgress = saved.equipmentProgress && saved.equipmentProgress[ownedId];
+          if (!ownedItem || ownedItem.slot !== slot || !savedProgress) return maxLevel;
+          return Math.max(maxLevel, Math.floor(readProfileNumber(savedProgress.level, 1, 1, MAX_EQUIPMENT_LEVEL)));
+        }, 1);
+        slotLevels[slot] = migratedLevel;
+      });
 
       const ownedPets = [...new Set(
         Array.isArray(saved.ownedPets) ? saved.ownedPets : []
@@ -2362,12 +2756,15 @@ document.addEventListener('DOMContentLoaded', () => {
         weaponLevel: readProfileNumber(saved.weaponLevel, 1, 1),
         inventory,
         equipped,
+        slotLevels,
         equipmentProgress,
+        lockedEquipment,
         equipmentChestPity: Math.floor(readProfileNumber(saved.equipmentChestPity, 0, 0, LEGENDARY_PITY_LIMIT - 1)),
         totalEquipmentChests: Math.floor(readProfileNumber(saved.totalEquipmentChests, 0, 0)),
         freeEquipmentChests: Math.floor(readProfileNumber(saved.freeEquipmentChests, 0, 0)),
         highestBossStage: Math.floor(readProfileNumber(saved.highestBossStage, 0, 0)),
         equipmentDismantleCount: Math.floor(readProfileNumber(saved.equipmentDismantleCount, 0, 0)),
+        claimedFirstClearBonuses: Array.isArray(saved.claimedFirstClearBonuses) ? saved.claimedFirstClearBonuses.map(Number).filter((stage) => Number.isFinite(stage)) : [],
         shopOffers: Array.isArray(saved.shopOffers) ? saved.shopOffers.map((offer) => ({ ...offer })) : [],
         shopBattlesRemaining: Math.floor(readProfileNumber(saved.shopBattlesRemaining, SHOP_REFRESH_BATTLES, 1, SHOP_REFRESH_BATTLES)),
         shopCycle: Math.floor(readProfileNumber(saved.shopCycle, 0, 0)),
@@ -2483,21 +2880,30 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getEquipmentProgress(profile, itemId) {
-    return profile.equipmentProgress?.[itemId] || { level: 1, enhancement: 0 };
+    const progress = profile.equipmentProgress?.[itemId] || { level: 1, enhancement: 0 };
+    return { level: 1, enhancement: Math.floor(readProfileNumber(progress.enhancement, 0, 0, MAX_ENHANCEMENT)) };
   }
 
-  function getEquipmentStatValue(item, progress) {
-    const levelScale = 1 + (progress.level - 1) * 0.02;
-    const breakthroughScale = progress.level >= 50 ? 1.5 : progress.level >= 25 ? 1.2 : 1;
+  function getSlotLevel(profile, slot) {
+    return Math.floor(readProfileNumber(profile.slotLevels?.[slot], 1, 1, MAX_EQUIPMENT_LEVEL));
+  }
+
+  function getEquipmentStatValue(item, progress, profile) {
+    const slotLevel = profile ? getSlotLevel(profile, item.slot) : Math.floor(readProfileNumber(progress.level, 1, 1, MAX_EQUIPMENT_LEVEL));
+    const levelScale = 1 + (slotLevel - 1) * 0.02;
+    const breakthroughScale = slotLevel >= 50 ? 1.5 : slotLevel >= 25 ? 1.2 : 1;
     const enhancementScale = 1 + progress.enhancement * 0.06;
-    return Math.max(1, Math.round(item.statValue * levelScale * breakthroughScale * enhancementScale));
+    const rawValue = Math.max(1, Math.round(item.statValue * levelScale * breakthroughScale * enhancementScale));
+    if (item.statKey === 'criticalRate') return Math.min(MAX_CRITICAL_RATE, rawValue);
+    if (item.statKey === 'goldBonusRate' || item.statKey === 'stoneBonusRate') return Math.min(MAX_RESOURCE_BONUS_RATE, rawValue);
+    return rawValue;
   }
 
-  function getEquipmentLevelUpCost(item, currentLevel) {
+  function getSlotLevelUpCost(slot, currentLevel) {
     const equipmentBalance = BALANCE_CONFIG.equipment;
     return Math.round(
-      equipmentBalance.levelBaseCost[item.tier]
-      * (1 + (currentLevel - 1) * equipmentBalance.levelCostGrowth)
+      equipmentBalance.slotLevelBaseCost[slot]
+      * (1 + (currentLevel - 1) * equipmentBalance.slotLevelCostGrowth)
     );
   }
 
@@ -2507,8 +2913,75 @@ document.addEventListener('DOMContentLoaded', () => {
     return {
       stoneCost: equipmentBalance.enhancementStoneCosts[currentEnhancement],
       successRate: equipmentBalance.enhancementSuccessRates[currentEnhancement],
-      destroyRate: equipmentBalance.enhancementDestroyRates[currentEnhancement],
+      downgradeOnFail: currentEnhancement >= equipmentBalance.enhancementDowngradeFrom,
     };
+  }
+
+  function getEnhancementStonesSpent(enhancement) {
+    return BALANCE_CONFIG.equipment.enhancementStoneCosts
+      .slice(0, Math.max(0, Math.min(MAX_ENHANCEMENT, enhancement)))
+      .reduce((sum, cost) => sum + cost, 0);
+  }
+
+  function getDismantleStoneReward(item, progress) {
+    const baseReward = DUPLICATE_STONE_REWARD[item.tier];
+    const spent = getEnhancementStonesSpent(progress.enhancement);
+    const refund = Math.floor(spent * BALANCE_CONFIG.equipment.dismantleEnhancementRefundRate);
+    return { baseReward, refund, total: baseReward + refund };
+  }
+
+  function isEquipmentLocked(profile, itemId) {
+    return Array.isArray(profile.lockedEquipment) && profile.lockedEquipment.includes(itemId);
+  }
+
+  function setEquipmentLock(itemId, shouldLock) {
+    const profile = loadPlayerProfile();
+    const item = EQUIPMENT_DATA[itemId];
+    if (!item || !profile.inventory.includes(itemId)) return;
+
+    const locked = new Set(Array.isArray(profile.lockedEquipment) ? profile.lockedEquipment : []);
+    if (shouldLock) locked.add(itemId);
+    else locked.delete(itemId);
+    profile.lockedEquipment = [...locked].filter((ownedId) => profile.inventory.includes(ownedId));
+    savePlayerProfile(profile);
+    renderLobby();
+    showEquipmentNotice(`${item.name} ${shouldLock ? '잠금 완료 · 판매/분해 불가' : '잠금 해제 완료'}`);
+  }
+
+  function getLegendaryPityRemaining(profile) {
+    if (profile.level < 40) return LEGENDARY_PITY_LIMIT;
+    return Math.max(1, LEGENDARY_PITY_LIMIT - Math.floor(readProfileNumber(profile.equipmentChestPity, 0, 0, LEGENDARY_PITY_LIMIT - 1)));
+  }
+
+  function getGrowthAdvice(profile, reachedStage) {
+    const advice = [];
+    const weaponProgress = getEquipmentProgress(profile, profile.equipped.weapon);
+    const weaponSlotLevel = getSlotLevel(profile, 'weapon');
+    const glovesSlotLevel = getSlotLevel(profile, 'gloves');
+    const hasShieldPet = profile.equippedPet === 'rift_guardian';
+
+    if (currentRunBossKills <= 1) {
+      advice.push('초반 생존이 어렵다면 보스 워닝 사인이 나온 뒤 가로/세로 이동을 먼저 연습하세요.');
+    }
+    if (weaponSlotLevel < Math.min(20, Math.max(5, profile.level))) {
+      advice.push('전투 시간이 길다면 골드로 무기 슬롯 레벨을 올리세요. 슬롯 레벨은 장비를 바꿔도 유지됩니다.');
+    }
+    if (weaponProgress.enhancement < 5 && profile.enhancementStones > 0) {
+      advice.push('강화석이 있다면 현재 무기를 +5까지 강화해 공격력을 먼저 확보하세요.');
+    }
+    if (profile.level >= 10 && !hasShieldPet && profile.ownedPets.includes('rift_guardian')) {
+      advice.push('피격이 잦다면 보호막 펫 루메를 장착해 한 번 더 버틸 수 있게 만드세요.');
+    }
+    if (profile.freeEquipmentChests > 0 || profile.gold >= EQUIPMENT_CHEST_COST) {
+      advice.push(`상점에서 장비 상자를 열어 장비를 갱신하세요. 레전더리 확정까지 ${getLegendaryPityRemaining(profile)}회 남았습니다.`);
+    }
+    if (glovesSlotLevel < 10 && reachedStage >= 5) {
+      advice.push('중반부터는 장갑 슬롯을 올려 치명타율을 보강하면 보스 처치 시간이 줄어듭니다.');
+    }
+    if (advice.length === 0) {
+      advice.push('현재 성장은 안정적입니다. 다음 목표는 무기 슬롯 Lv.50 또는 레전더리 무기 +10강입니다.');
+    }
+    return advice.slice(0, 3);
   }
 
   function getEquipmentBonuses(profile) {
@@ -2517,13 +2990,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const item = EQUIPMENT_DATA[itemId];
       if (!item) return;
       const progress = getEquipmentProgress(profile, itemId);
-      if (item.statKey in bonuses) bonuses[item.statKey] += getEquipmentStatValue(item, progress);
-      const hasEpicSwordPerk = item.tier === 'epic' && progress.level >= MAX_EQUIPMENT_LEVEL;
-      const hasLegendarySwordPerk = item.tier === 'legendary' && progress.enhancement >= MAX_ENHANCEMENT;
-      if (item.slot === 'weapon' && (hasEpicSwordPerk || hasLegendarySwordPerk)) {
-        bonuses.swordCount += 1;
-      }
+      if (item.statKey in bonuses) bonuses[item.statKey] += getEquipmentStatValue(item, progress, profile);
+      const slotLevel = getSlotLevel(profile, item.slot);
+      const hasSlotSwordPerk = ['epic', 'legendary'].includes(item.tier) && item.slot === 'weapon' && slotLevel >= MAX_EQUIPMENT_LEVEL;
+      const hasLegendarySwordPerk = item.tier === 'legendary' && item.slot === 'weapon' && progress.enhancement >= MAX_ENHANCEMENT;
+      if (hasSlotSwordPerk) bonuses.swordCount += 1;
+      if (hasLegendarySwordPerk) bonuses.swordCount += 1;
     });
+    bonuses.criticalRate = Math.min(MAX_CRITICAL_RATE, bonuses.criticalRate);
+    bonuses.goldBonusRate = Math.min(MAX_RESOURCE_BONUS_RATE, bonuses.goldBonusRate);
+    bonuses.stoneBonusRate = Math.min(MAX_RESOURCE_BONUS_RATE, bonuses.stoneBonusRate);
     return bonuses;
   }
 
@@ -2531,14 +3007,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const levelAttackBonus = Math.floor((profile.level - 1) / 5);
     const equipmentBonuses = getEquipmentBonuses(profile);
     const petBonuses = getPetBonuses(profile);
-    const attack = profile.baseAttack + (profile.weaponLevel - 1) * 2 + levelAttackBonus + equipmentBonuses.attack;
+    const attack = profile.baseAttack + levelAttackBonus + equipmentBonuses.attack;
     return {
       playerLevel: profile.level,
       attack,
-      criticalRate: Math.min(100, profile.criticalRate + equipmentBonuses.criticalRate),
+      criticalRate: Math.min(MAX_CRITICAL_RATE, profile.criticalRate + equipmentBonuses.criticalRate),
       swordCount: profile.baseSwordCount + equipmentBonuses.swordCount,
-      goldBonusRate: equipmentBonuses.goldBonusRate + petBonuses.goldBonusRate,
-      stoneBonusRate: equipmentBonuses.stoneBonusRate + petBonuses.stoneBonusRate,
+      goldBonusRate: Math.min(MAX_RESOURCE_BONUS_RATE, equipmentBonuses.goldBonusRate + petBonuses.goldBonusRate),
+      stoneBonusRate: Math.min(MAX_RESOURCE_BONUS_RATE, equipmentBonuses.stoneBonusRate + petBonuses.stoneBonusRate),
       shieldCharges: Math.min(1, petBonuses.shieldCharges),
       shieldRechargeRate: petBonuses.shieldRechargeRate,
       petAttackDamage: petBonuses.petAttackRate > 0 ? Math.max(2, Math.round(attack * petBonuses.petAttackRate)) : 0,
@@ -2550,6 +3026,20 @@ document.addEventListener('DOMContentLoaded', () => {
   function getCombatPower(profile) {
     const stats = getPlayerCombatStats(profile);
     return 70 + stats.attack * 4 + stats.criticalRate * 2 + stats.swordCount * 25 + stats.petAttackDamage * 3 + (profile.level - 1) * 18;
+  }
+
+  function getRecommendedPowerForStage(stage) {
+    const safeStage = Math.max(1, Math.floor(stage));
+    if (safeStage <= CAMPAIGN_STAGE_MAX) return 120 + safeStage * 80 + Math.max(0, safeStage - 5) * 35;
+    return 120 + CAMPAIGN_STAGE_MAX * 80 + (safeStage - CAMPAIGN_STAGE_MAX) * 140;
+  }
+
+  function getPowerDifficultyLabel(currentPower, recommendedPower) {
+    const ratio = currentPower / Math.max(1, recommendedPower);
+    if (ratio >= 1.15) return '쉬움';
+    if (ratio >= 0.9) return '적정';
+    if (ratio >= 0.7) return '어려움';
+    return '위험';
   }
 
   function getBossClearRewards(stage, random = Math.random) {
@@ -2571,22 +3061,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function grantBossClearRewards(stage, runPetId) {
     const profile = loadPlayerProfile();
-    const baseRewards = getBossClearRewards(stage);
-    const equipmentBonuses = getEquipmentBonuses(profile);
-    const petBonuses = getPetBonuses(profile);
+    const safeStage = Math.max(1, Math.floor(stage));
+    const baseRewards = getBossClearRewards(safeStage);
+    const combatStats = getPlayerCombatStats(profile);
     const rewards = {
       exp: baseRewards.exp,
-      gold: Math.floor(baseRewards.gold * (1 + (equipmentBonuses.goldBonusRate + petBonuses.goldBonusRate) / 100)),
-      enhancementStones: Math.floor(baseRewards.enhancementStones * (1 + (equipmentBonuses.stoneBonusRate + petBonuses.stoneBonusRate) / 100)),
-      equipmentChests: Math.max(1, Math.floor(stage)) % BALANCE_CONFIG.bossRewards.equipmentChestEvery === 0 ? 1 : 0,
+      gold: Math.floor(baseRewards.gold * (1 + combatStats.goldBonusRate / 100)),
+      enhancementStones: Math.floor(baseRewards.enhancementStones * (1 + combatStats.stoneBonusRate / 100)),
+      equipmentChests: safeStage % BALANCE_CONFIG.bossRewards.equipmentChestEvery === 0 ? 1 : 0,
+      bonusMessages: [],
     };
     let levelsGained = 0;
+
+    profile.claimedFirstClearBonuses = Array.isArray(profile.claimedFirstClearBonuses) ? [...profile.claimedFirstClearBonuses] : [];
+    if (!profile.claimedFirstClearBonuses.includes(safeStage)) {
+      if (safeStage === 1) {
+        rewards.equipmentChests += 1;
+        rewards.bonusMessages.push('첫 1단계 클리어 보너스: 장비 상자 +1');
+      }
+      if (safeStage === 3) {
+        rewards.enhancementStones += 5;
+        rewards.bonusMessages.push('첫 3단계 클리어 보너스: 강화석 +5');
+      }
+      if (safeStage === 5) {
+        rewards.enhancementStones += 10;
+        rewards.bonusMessages.push('첫 5단계 클리어 보너스: 강화석 +10');
+      }
+      profile.claimedFirstClearBonuses.push(safeStage);
+    }
 
     profile.exp += rewards.exp;
     profile.gold += rewards.gold;
     profile.enhancementStones += rewards.enhancementStones;
     profile.freeEquipmentChests += rewards.equipmentChests;
-    profile.highestBossStage = Math.max(profile.highestBossStage, Math.max(1, Math.floor(stage)));
+    profile.highestBossStage = Math.max(profile.highestBossStage, safeStage);
 
     while (profile.level < profile.maxLevel) {
       const requiredExp = getRequiredPlayerExp(profile.level);
@@ -2614,7 +3122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (element) element.textContent = value;
   }
 
-  function formatEquipmentStat(item, progress = { level: 1, enhancement: 0 }) {
+  function formatEquipmentStat(item, progress = { level: 1, enhancement: 0 }, profile = null) {
     const labels = {
       attack: '공격력',
       criticalRate: '치명타율',
@@ -2622,16 +3130,19 @@ document.addEventListener('DOMContentLoaded', () => {
       stoneBonusRate: '강화석 획득량',
     };
     const suffix = item.statKey === 'attack' ? '' : '%';
-    return `${labels[item.statKey]} +${getEquipmentStatValue(item, progress)}${suffix}`;
+    return `${labels[item.statKey]} +${getEquipmentStatValue(item, progress, profile)}${suffix}`;
   }
 
-  function getWeaponPerkText(item, progress) {
+  function getWeaponPerkText(item, progress, profile = null) {
     if (item.slot !== 'weapon') return '';
+    const slotLevel = profile ? getSlotLevel(profile, item.slot) : Math.floor(readProfileNumber(progress.level, 1, 1, MAX_EQUIPMENT_LEVEL));
     if (item.tier === 'epic') {
-      return progress.level >= MAX_EQUIPMENT_LEVEL ? '특전 활성: 검기 +1' : '특전: 성장 LV.50 달성 시 검기 +1';
+      return slotLevel >= MAX_EQUIPMENT_LEVEL ? '특전 활성: 무기 슬롯 LV.50 · 검기 +1' : '특전: 무기 슬롯 LV.50 달성 시 검기 +1';
     }
     if (item.tier === 'legendary') {
-      return progress.enhancement >= MAX_ENHANCEMENT ? '특전 활성: 검기 +1' : '특전: +10강 달성 시 검기 +1';
+      const slotPerk = slotLevel >= MAX_EQUIPMENT_LEVEL ? '무기 슬롯 LV.50 검기 +1 활성' : '무기 슬롯 LV.50 달성 시 검기 +1';
+      const enhancePerk = progress.enhancement >= MAX_ENHANCEMENT ? '+10강 검기 +1 활성' : '+10강 달성 시 검기 +1';
+      return `특전: ${slotPerk} · ${enhancePerk}`;
     }
     return '';
   }
@@ -2641,39 +3152,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
     equippedSlots.innerHTML = Object.entries(EQUIPMENT_SLOTS).map(([slot, slotName]) => {
       const item = EQUIPMENT_DATA[profile.equipped[slot]];
+      const slotLevel = getSlotLevel(profile, slot);
+      const slotCost = slotLevel < MAX_EQUIPMENT_LEVEL ? getSlotLevelUpCost(slot, slotLevel) : 0;
       if (!item) {
-        return `<div class="equipment-slot"><span>${slotName}</span><strong class="empty-slot">비어 있음</strong></div>`;
+        return `<div class="equipment-slot"><span>${slotName}</span><strong class="empty-slot">비어 있음</strong><p class="slot-level">슬롯 LV.${slotLevel}</p></div>`;
       }
       const progress = getEquipmentProgress(profile, item.id);
+      const perkText = getWeaponPerkText(item, progress, profile);
       return `
         <div class="equipment-slot equipped">
-          <span>${slotName} · ${EQUIPMENT_TIERS[item.tier]}</span>
+          <span>${slotName} 슬롯 LV.${slotLevel} · ${EQUIPMENT_TIERS[item.tier]}</span>
           <strong class="equipment-tier-${item.tier}">${item.name}</strong>
-          <p class="slot-level">장비 LV.${progress.level} · +${progress.enhancement}강<br />${formatEquipmentStat(item, progress)}${getWeaponPerkText(item, progress) ? `<br />${getWeaponPerkText(item, progress)}` : ''}</p>
+          <p class="slot-level">+${progress.enhancement}강<br />${formatEquipmentStat(item, progress, profile)}${perkText ? `<br />${perkText}` : ''}</p>
+          <button type="button" data-level-up-slot="${slot}" ${slotLevel >= MAX_EQUIPMENT_LEVEL || profile.gold < slotCost ? 'disabled' : ''}>${slotLevel >= MAX_EQUIPMENT_LEVEL ? '슬롯 LV.MAX' : `슬롯 레벨업 ${slotCost}G`}</button>
         </div>`;
     }).join('');
 
-    equipmentInventory.innerHTML = profile.inventory.map((itemId) => {
+    const sortedInventory = profile.inventory.slice().sort((aId, bId) => {
+      const a = EQUIPMENT_DATA[aId];
+      const b = EQUIPMENT_DATA[bId];
+      if (!a || !b) return 0;
+      const aEquippable = profile.level >= a.requiredLevel && profile.equipped[a.slot] !== a.id ? 1 : 0;
+      const bEquippable = profile.level >= b.requiredLevel && profile.equipped[b.slot] !== b.id ? 1 : 0;
+      if (bEquippable !== aEquippable) return bEquippable - aEquippable;
+      const aEquipped = profile.equipped[a.slot] === a.id ? 1 : 0;
+      const bEquipped = profile.equipped[b.slot] === b.id ? 1 : 0;
+      if (bEquipped !== aEquipped) return bEquipped - aEquipped;
+      const tierOrder = { legendary: 4, epic: 3, rare: 2, common: 1 };
+      if ((tierOrder[b.tier] || 0) !== (tierOrder[a.tier] || 0)) return (tierOrder[b.tier] || 0) - (tierOrder[a.tier] || 0);
+      return b.requiredLevel - a.requiredLevel;
+    });
+
+    equipmentInventory.innerHTML = sortedInventory.map((itemId) => {
       const item = EQUIPMENT_DATA[itemId];
       const progress = getEquipmentProgress(profile, item.id);
       const isEquipped = profile.equipped[item.slot] === item.id;
-      const isLocked = profile.level < item.requiredLevel;
-      const levelCost = progress.level < MAX_EQUIPMENT_LEVEL ? getEquipmentLevelUpCost(item, progress.level) : 0;
+      const isLevelLocked = profile.level < item.requiredLevel;
+      const userLocked = isEquipmentLocked(profile, item.id);
       const enhancementRule = getEnhancementRule(progress.enhancement);
-      const effectiveDestroyRate = STARTER_EQUIPMENT.includes(item.id) ? 0 : enhancementRule?.destroyRate || 0;
-      const cannotDispose = isEquipped || STARTER_EQUIPMENT.includes(item.id);
+      const downgradeOnFail = enhancementRule?.downgradeOnFail || false;
+      const cannotDispose = isEquipped || userLocked || STARTER_EQUIPMENT.includes(item.id);
+      const dismantleReward = getDismantleStoneReward(item, progress);
+      const perkText = getWeaponPerkText(item, progress, profile);
       return `
-        <div class="inventory-item">
+        <div class="inventory-item ${userLocked ? 'locked' : ''}">
           <div>
-            <strong class="equipment-tier-${item.tier}">${item.name}</strong>
-            <p>${EQUIPMENT_SLOTS[item.slot]} · ${EQUIPMENT_TIERS[item.tier]} · 요구 LV.${item.requiredLevel}<br />장비 LV.${progress.level} · +${progress.enhancement}강 · ${formatEquipmentStat(item, progress)}${getWeaponPerkText(item, progress) ? `<br />${getWeaponPerkText(item, progress)}` : ''}</p>
+            <strong class="equipment-tier-${item.tier}">${item.name}</strong>${userLocked ? '<span class="lock-badge">🔒 잠금</span>' : ''}
+            <p>${EQUIPMENT_SLOTS[item.slot]} · ${EQUIPMENT_TIERS[item.tier]} · 요구 LV.${item.requiredLevel}<br />슬롯 LV.${getSlotLevel(profile, item.slot)} 적용 · +${progress.enhancement}강 · ${formatEquipmentStat(item, progress, profile)}${perkText ? `<br />${perkText}` : ''}</p>
           </div>
           <div class="inventory-actions">
-            <button type="button" data-equip-id="${item.id}" ${isEquipped || isLocked ? 'disabled' : ''}>${isEquipped ? '장착 중' : isLocked ? '레벨 부족' : '장착'}</button>
-            <button type="button" data-level-up-id="${item.id}" ${progress.level >= MAX_EQUIPMENT_LEVEL || profile.gold < levelCost ? 'disabled' : ''}>${progress.level >= MAX_EQUIPMENT_LEVEL ? '레벨 MAX' : `레벨업 ${levelCost}G`}</button>
-            <button type="button" data-enhance-id="${item.id}" ${!enhancementRule || profile.enhancementStones < (enhancementRule?.stoneCost || 0) ? 'disabled' : ''}>${enhancementRule ? `강화 ${enhancementRule.stoneCost}석 (${enhancementRule.successRate}%${effectiveDestroyRate ? ` · 파괴 ${effectiveDestroyRate}%` : ''})` : '강화 MAX'}</button>
+            <button type="button" data-equip-id="${item.id}" ${isEquipped || isLevelLocked ? 'disabled' : ''}>${isEquipped ? '장착 중' : isLevelLocked ? '레벨 부족' : '장착'}</button>
+            <button type="button" data-enhance-id="${item.id}" ${!enhancementRule || profile.enhancementStones < (enhancementRule?.stoneCost || 0) ? 'disabled' : ''}>${enhancementRule ? `강화 ${enhancementRule.stoneCost}석 (${enhancementRule.successRate}%${downgradeOnFail ? ' · 실패 시 -1' : ''})` : '강화 MAX'}</button>
+            <button type="button" data-lock-id="${item.id}" data-lock-next="${userLocked ? 'unlock' : 'lock'}">${userLocked ? '잠금 해제' : '잠금'}</button>
             <button type="button" data-sell-id="${item.id}" ${cannotDispose ? 'disabled' : ''}>판매 ${EQUIPMENT_SALE_GOLD[item.tier]}G</button>
-            <button type="button" data-dismantle-id="${item.id}" ${cannotDispose ? 'disabled' : ''}>분해 ${DUPLICATE_STONE_REWARD[item.tier]}석</button>
+            <button type="button" data-dismantle-id="${item.id}" ${cannotDispose ? 'disabled' : ''}>분해 ${dismantleReward.total}석</button>
           </div>
         </div>`;
     }).join('');
@@ -2695,12 +3227,24 @@ document.addEventListener('DOMContentLoaded', () => {
       showEquipmentNotice('장착 중인 장비는 처분할 수 없습니다.');
       return;
     }
+    if (isEquipmentLocked(profile, itemId)) {
+      showEquipmentNotice('잠금 처리된 장비는 판매/분해할 수 없습니다. 잠금 해제 후 다시 시도하세요.');
+      return;
+    }
 
+    const progress = getEquipmentProgress(profile, itemId);
+    const dismantleReward = getDismantleStoneReward(item, progress);
     const rewardText = mode === 'sell'
       ? `${EQUIPMENT_SALE_GOLD[item.tier]} 골드`
-      : `강화석 ${DUPLICATE_STONE_REWARD[item.tier]}개`;
+      : `강화석 ${dismantleReward.total}개`;
     const actionText = mode === 'sell' ? '판매' : '분해';
-    if (!window.confirm(`${item.name}을(를) ${actionText}하고 ${rewardText}를 받으시겠습니까?`)) return;
+    const extraNotice = mode === 'sell'
+      ? '판매 시 장비 강화에 사용한 강화석은 환급되지 않습니다.'
+      : `분해 시 기본 ${dismantleReward.baseReward}개 + 강화 환급 ${dismantleReward.refund}개를 받습니다.`;
+    if (!window.confirm(`${item.name}을(를) ${actionText}하고 ${rewardText}를 받으시겠습니까?
+
+${extraNotice}
+골드로 올린 슬롯 레벨은 유지됩니다.`)) return;
 
     profile.inventory = profile.inventory.filter((ownedId) => ownedId !== itemId);
     profile.equipmentProgress = { ...profile.equipmentProgress };
@@ -2710,14 +3254,59 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mode === 'sell') {
       profile.gold += EQUIPMENT_SALE_GOLD[item.tier];
     } else {
-      profile.enhancementStones += DUPLICATE_STONE_REWARD[item.tier];
+      profile.enhancementStones += dismantleReward.total;
       profile.equipmentDismantleCount += 1;
       unlockedPets = unlockEligiblePets(profile);
     }
 
     savePlayerProfile(profile);
     renderLobby();
-    showEquipmentNotice(`${item.name} ${actionText} 완료 · ${rewardText} 획득`);
+    showEquipmentNotice(`${item.name} ${actionText} 완료 · ${rewardText} 획득 · 슬롯 레벨 유지`);
+    if (unlockedPets.length > 0) showPetNotice(`${unlockedPets.join(', ')} 해금 완료!`);
+  }
+
+  function batchDismantleEquipment(maxTier) {
+    const profile = loadPlayerProfile();
+    const tierOrder = { common: 1, rare: 2, epic: 3, legendary: 4 };
+    const maxTierValue = tierOrder[maxTier] || tierOrder.common;
+    const equippedIds = new Set(Object.values(profile.equipped || {}));
+    const targets = profile.inventory.filter((itemId) => {
+      const item = EQUIPMENT_DATA[itemId];
+      if (!item) return false;
+      if ((tierOrder[item.tier] || 0) > maxTierValue) return false;
+      if (STARTER_EQUIPMENT.includes(itemId)) return false;
+      if (equippedIds.has(itemId)) return false;
+      if (isEquipmentLocked(profile, itemId)) return false;
+      return true;
+    });
+
+    if (targets.length === 0) {
+      showEquipmentNotice('일괄 분해 가능한 장비가 없습니다. 잠금/장착/기본 장비는 제외됩니다.');
+      return;
+    }
+
+    const totalReward = targets.reduce((sum, itemId) => {
+      const item = EQUIPMENT_DATA[itemId];
+      const progress = getEquipmentProgress(profile, itemId);
+      return sum + getDismantleStoneReward(item, progress).total;
+    }, 0);
+
+    const label = maxTier === 'rare' ? '레어 이하' : '커먼';
+    if (!window.confirm(`${label} 장비 ${targets.length}개를 일괄 분해하고 강화석 ${totalReward}개를 받으시겠습니까?
+
+잠금/장착/기본 장비는 자동 제외됩니다.
+골드로 올린 슬롯 레벨은 유지됩니다.`)) return;
+
+    profile.inventory = profile.inventory.filter((itemId) => !targets.includes(itemId));
+    profile.equipmentProgress = { ...profile.equipmentProgress };
+    targets.forEach((itemId) => { delete profile.equipmentProgress[itemId]; });
+    profile.enhancementStones += totalReward;
+    profile.equipmentDismantleCount += targets.length;
+    const unlockedPets = unlockEligiblePets(profile);
+
+    savePlayerProfile(profile);
+    renderLobby();
+    showEquipmentNotice(`${label} 장비 ${targets.length}개 일괄 분해 완료 · 강화석 ${totalReward}개 획득`);
     if (unlockedPets.length > 0) showPetNotice(`${unlockedPets.join(', ')} 해금 완료!`);
   }
 
@@ -2734,25 +3323,25 @@ document.addEventListener('DOMContentLoaded', () => {
     showEquipmentNotice(`${item.name} 장착 완료`);
   }
 
-  function levelUpEquipment(itemId) {
-    const item = EQUIPMENT_DATA[itemId];
+  function levelUpEquipmentSlot(slot) {
     const profile = loadPlayerProfile();
-    if (!item || !profile.inventory.includes(itemId)) return;
+    if (!EQUIPMENT_SLOTS[slot]) return;
 
-    const progress = { ...getEquipmentProgress(profile, itemId) };
-    if (progress.level >= MAX_EQUIPMENT_LEVEL) return;
+    const currentLevel = getSlotLevel(profile, slot);
+    if (currentLevel >= MAX_EQUIPMENT_LEVEL) return;
 
-    const goldCost = getEquipmentLevelUpCost(item, progress.level);
+    const goldCost = getSlotLevelUpCost(slot, currentLevel);
     if (profile.gold < goldCost) return;
 
     profile.gold -= goldCost;
-    progress.level += 1;
-    profile.equipmentProgress = { ...profile.equipmentProgress, [itemId]: progress };
+    profile.slotLevels = { ...DEFAULT_PLAYER_PROFILE.slotLevels, ...(profile.slotLevels || {}) };
+    profile.slotLevels[slot] = currentLevel + 1;
     savePlayerProfile(profile);
     renderLobby();
 
-    const milestone = progress.level === 25 || progress.level === 50;
-    showEquipmentNotice(`${item.name} 장비 LV.${progress.level} 달성${milestone ? ' · 돌파 보너스 적용!' : ''}`);
+    const nextLevel = profile.slotLevels[slot];
+    const milestone = nextLevel === 25 || nextLevel === 50;
+    showEquipmentNotice(`${EQUIPMENT_SLOTS[slot]} 슬롯 LV.${nextLevel} 달성 · 장비 교체 후에도 유지${milestone ? ' · 돌파 보너스 적용!' : ''}`);
   }
 
   function enhanceEquipment(itemId) {
@@ -2763,6 +3352,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const progress = { ...getEquipmentProgress(profile, itemId) };
     const rule = getEnhancementRule(progress.enhancement);
     if (!rule || profile.enhancementStones < rule.stoneCost) return;
+    const downgradeText = rule.downgradeOnFail ? '\n실패 페널티: 강화 수치 -1' : '\n실패 페널티: 강화 수치 유지';
+    if (!window.confirm(`${item.name} +${progress.enhancement} → +${progress.enhancement + 1} 강화 시도
+필요 강화석: ${rule.stoneCost}개
+성공률: ${rule.successRate}%${downgradeText}
+실패 시 사용한 강화석은 소모됩니다.
+장비는 파괴되지 않습니다.`)) return;
 
     profile.enhancementStones -= rule.stoneCost;
     const roll = Math.random() * 100;
@@ -2770,21 +3365,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (roll < rule.successRate) {
       progress.enhancement += 1;
-      profile.equipmentProgress = { ...profile.equipmentProgress, [itemId]: progress };
-      resultMessage = `${item.name} +${progress.enhancement}강 성공!`;
-    } else if (!STARTER_EQUIPMENT.includes(itemId) && roll < rule.successRate + rule.destroyRate) {
-      profile.inventory = profile.inventory.filter((ownedId) => ownedId !== itemId);
-      profile.equipmentProgress = { ...profile.equipmentProgress };
-      delete profile.equipmentProgress[itemId];
-      if (profile.equipped[item.slot] === itemId) {
-        const fallbackId = profile.inventory.find((ownedId) => EQUIPMENT_DATA[ownedId]?.slot === item.slot);
-        profile.equipped = { ...profile.equipped, [item.slot]: fallbackId || null };
-      }
-      resultMessage = `${item.name} 강화 실패 · 장비 파괴`;
+      resultMessage = `${item.name} +${progress.enhancement}강 성공! · 강화석 ${rule.stoneCost}개 사용`;
+    } else if (rule.downgradeOnFail) {
+      const before = progress.enhancement;
+      progress.enhancement = Math.max(0, progress.enhancement - 1);
+      resultMessage = `${item.name} 강화 실패 · +${before}강 → +${progress.enhancement}강 · 강화석 ${rule.stoneCost}개 소모`;
     } else {
-      resultMessage = `${item.name} 강화 실패 · 강화 수치 유지`;
+      resultMessage = `${item.name} 강화 실패 · 강화 수치 유지 · 강화석 ${rule.stoneCost}개 소모`;
     }
 
+    profile.equipmentProgress = { ...profile.equipmentProgress, [itemId]: progress };
     savePlayerProfile(profile);
     renderLobby();
     showEquipmentNotice(resultMessage);
@@ -2895,6 +3485,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderShop(profile) {
     setLobbyText('equipmentChestPity', profile.equipmentChestPity);
+    setLobbyText('equipmentChestPityRemaining', getLegendaryPityRemaining(profile));
     setLobbyText('freeEquipmentChests', profile.freeEquipmentChests);
     setLobbyText('equipmentChestPrice', profile.freeEquipmentChests > 0 ? '무료 상자 사용 가능' : `${EQUIPMENT_CHEST_COST} 골드`);
     if (openEquipmentChestBtn) {
@@ -2932,6 +3523,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (shopNotice) shopNotice.textContent = message;
   }
 
+  function getChestResultIcon(tier) {
+    if (tier === 'legendary') return '🌟';
+    if (tier === 'epic') return '💠';
+    if (tier === 'rare') return '🔷';
+    return '⚔️';
+  }
+
+  function showChestResultPopup(result) {
+    if (!chestResultOverlay || !chestResultCard) return;
+
+    const tier = result.tier || 'common';
+    chestResultCard.className = `chest-result-card ${tier}`;
+    if (chestResultIcon) chestResultIcon.textContent = getChestResultIcon(tier);
+    if (chestResultTitle) chestResultTitle.textContent = result.isDuplicate ? '중복 장비 변환' : '새 장비 획득!';
+    if (chestResultItem) {
+      chestResultItem.className = `chest-result-item equipment-tier-${tier}`;
+      chestResultItem.textContent = `${EQUIPMENT_TIERS[tier]} ${result.itemName}`;
+    }
+    if (chestResultDesc) {
+      chestResultDesc.textContent = result.isDuplicate
+        ? `이미 보유한 장비라 강화석 ${result.stoneReward}개로 자동 변환되었습니다.`
+        : result.isLegendary
+          ? '레전더리 장비를 획득했습니다. 실수 방지를 위해 자동 잠금 처리되었습니다.'
+          : '보유 장비 목록에 추가되었습니다. 장비 탭에서 장착할 수 있습니다.';
+    }
+    if (chestResultMeta) {
+      const pityText = result.isLegendary ? '초기화됨' : `${result.pityRemaining}회 남음`;
+      const costText = result.usesFreeChest ? '무료 상자 사용' : `${EQUIPMENT_CHEST_COST} 골드 사용`;
+      chestResultMeta.innerHTML = `
+        <span>상자 사용 <strong>${costText}</strong></span>
+        <span>처리 결과 <strong>${result.isDuplicate ? `강화석 +${result.stoneReward}` : '인벤토리 추가'}</strong></span>
+        <span>레전더리 확정 <strong>${pityText}</strong></span>
+      `;
+    }
+    chestResultOverlay.classList.remove('hidden');
+  }
+
+  function closeChestResultPopup() {
+    if (chestResultOverlay) chestResultOverlay.classList.add('hidden');
+  }
+
   function openEquipmentChest() {
     const profile = loadPlayerProfile();
     const usesFreeChest = profile.freeEquipmentChests > 0;
@@ -2948,14 +3580,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const item = getRandomEquipmentByTier(tier, profile.level);
     const isDuplicate = profile.inventory.includes(item.id);
     let resultMessage;
+    let stoneReward = 0;
+    const isLegendary = tier === 'legendary';
 
     if (profile.level >= 40) {
-      if (tier === 'legendary') profile.equipmentChestPity = 0;
+      if (isLegendary) profile.equipmentChestPity = 0;
       else profile.equipmentChestPity = Math.min(LEGENDARY_PITY_LIMIT - 1, profile.equipmentChestPity + 1);
     }
 
     if (isDuplicate) {
-      const stoneReward = DUPLICATE_STONE_REWARD[tier];
+      stoneReward = DUPLICATE_STONE_REWARD[tier];
       profile.enhancementStones += stoneReward;
       resultMessage = `${EQUIPMENT_TIERS[tier]} ${item.name} 중복 · 강화석 ${stoneReward}개 획득`;
     } else {
@@ -2964,12 +3598,30 @@ document.addEventListener('DOMContentLoaded', () => {
         ...profile.equipmentProgress,
         [item.id]: { level: 1, enhancement: 0 },
       };
-      resultMessage = `${EQUIPMENT_TIERS[tier]} ${item.name} 획득!`;
+      if (isLegendary) {
+        profile.lockedEquipment = [...new Set([...(profile.lockedEquipment || []), item.id])];
+      }
+      resultMessage = `${EQUIPMENT_TIERS[tier]} ${item.name} 획득!${isLegendary ? ' · 자동 잠금 적용' : ''}`;
+    }
+
+    if (!isLegendary) {
+      resultMessage += ` · 레전더리 확정까지 ${getLegendaryPityRemaining(profile)}회`;
+    } else {
+      resultMessage += ' · 레전더리 천장 초기화';
     }
 
     savePlayerProfile(profile);
     renderLobby();
     showShopNotice(resultMessage);
+    showChestResultPopup({
+      tier,
+      itemName: item.name,
+      isDuplicate,
+      stoneReward,
+      isLegendary,
+      usesFreeChest,
+      pityRemaining: getLegendaryPityRemaining(profile),
+    });
   }
 
   function purchaseShopOffer(offerId) {
@@ -3000,7 +3652,10 @@ document.addEventListener('DOMContentLoaded', () => {
           ...profile.equipmentProgress,
           [item.id]: { level: 1, enhancement: 0 },
         };
-        resultMessage = `${EQUIPMENT_TIERS[item.tier]} ${item.name} 구매 완료`;
+        if (item.tier === 'legendary') {
+          profile.lockedEquipment = [...new Set([...(profile.lockedEquipment || []), item.id])];
+        }
+        resultMessage = `${EQUIPMENT_TIERS[item.tier]} ${item.name} 구매 완료${item.tier === 'legendary' ? ' · 자동 잠금 적용' : ''}`;
       }
     }
 
@@ -3045,6 +3700,11 @@ document.addEventListener('DOMContentLoaded', () => {
     showPetNotice(`${PET_DATA[petId].name} 동행 시작 · 다음 전투부터 적용`);
   }
 
+  function getStageLabelForNumber(stage) {
+    const safeStage = Math.max(1, Math.floor(Number(stage) || 1));
+    return safeStage <= CAMPAIGN_STAGE_MAX ? `STAGE ${safeStage}` : `INFINITE ${safeStage - CAMPAIGN_STAGE_MAX}`;
+  }
+
   function renderLobby() {
     const profile = loadPlayerProfile();
     savePlayerProfile(profile);
@@ -3060,10 +3720,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setLobbyText('lobbyExp', profile.exp);
     setLobbyText('lobbyExpMax', profile.expMax);
     setLobbyText('lobbyPower', combatPower.toLocaleString('ko-KR'));
+    const nextStage = Math.max(1, Math.min(CAMPAIGN_STAGE_MAX + 1, Math.floor(profile.highestBossStage || 0) + 1));
+    const recommendedPower = getRecommendedPowerForStage(nextStage);
+    setLobbyText('recommendedPower', recommendedPower.toLocaleString('ko-KR'));
+    setLobbyText('powerDifficulty', `${getStageLabelForNumber(nextStage)} ${getPowerDifficultyLabel(combatPower, recommendedPower)}`);
     setLobbyText('lobbyAttack', attack);
     setLobbyText('lobbyMaxHp', profile.maxHp);
     setLobbyText('lobbyCriticalRate', combatStats.criticalRate);
     setLobbyText('lobbySwordCount', combatStats.swordCount);
+    updatePlayerWeaponVisual(profile);
     renderEquipment(profile);
     renderShop(profile);
     renderPets(profile);
@@ -3079,6 +3744,24 @@ document.addEventListener('DOMContentLoaded', () => {
     lobbyPanels.forEach((panel) => {
       panel.classList.toggle('active', panel.dataset.panel === tabName);
     });
+  }
+
+  const TUTORIAL_STORAGE_KEY = 'abyssRaidTutorialSkipped';
+
+  function showTutorial() {
+    if (tutorialOverlay) tutorialOverlay.classList.remove('hidden');
+  }
+
+  function closeTutorial() {
+    if (tutorialOverlay) tutorialOverlay.classList.add('hidden');
+  }
+
+  function shouldShowTutorial() {
+    try {
+      return localStorage.getItem(TUTORIAL_STORAGE_KEY) !== 'true';
+    } catch (error) {
+      return true;
+    }
   }
 
   function showLobby() {
@@ -3526,6 +4209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const campaignStage = Math.min(CAMPAIGN_STAGE_MAX, Math.max(1, Math.floor(stage)));
     return {
       ...definition,
+      name: BOSS_STAGE_NAMES[campaignStage] || definition.name,
       image: BOSS_STAGE_IMAGES[campaignStage] || definition.image,
     };
   }
@@ -3602,6 +4286,59 @@ document.addEventListener('DOMContentLoaded', () => {
     damageDisplayVersion += 1;
   }
 
+  function getEquippedWeaponVisualState(profile = loadPlayerProfile()) {
+    const equippedWeaponId = profile?.equipped?.weapon;
+    const equippedWeapon = equippedWeaponId ? EQUIPMENT_DATA[equippedWeaponId] : null;
+    if (!equippedWeapon || equippedWeapon.slot !== 'weapon') {
+      return null;
+    }
+
+    const weaponSlotLevel = getSlotLevel(profile, 'weapon');
+    const tier = equippedWeapon.tier || 'common';
+    const tierClass = `weapon-tier-${tier}`;
+    let skinClass = 'weapon-skin-base';
+    if (tier === 'epic') skinClass = 'weapon-skin-blue';
+    if (tier === 'legendary') skinClass = 'weapon-skin-red';
+
+    let auraClass = '';
+    let auraLabel = '기본 검';
+    let swordWaveAuraClass = '';
+    if (weaponSlotLevel >= MAX_EQUIPMENT_LEVEL) {
+      auraClass = 'weapon-aura-red';
+      auraLabel = '붉은 오오라 · 무기 슬롯 LV.50';
+      swordWaveAuraClass = 'aura-red';
+    } else if (weaponSlotLevel >= 25) {
+      auraClass = 'weapon-aura-blue';
+      auraLabel = '푸른 오오라 · 무기 슬롯 LV.25';
+      swordWaveAuraClass = 'aura-blue';
+    }
+
+    return {
+      item: equippedWeapon,
+      tier,
+      tierClass,
+      skinClass,
+      auraClass,
+      auraLabel,
+      swordWaveClass: `tier-${tier}${swordWaveAuraClass ? ` ${swordWaveAuraClass}` : ''}`.trim(),
+    };
+  }
+
+  function updatePlayerWeaponVisual(profile = loadPlayerProfile()) {
+    if (!playerWeapon) return;
+    const weaponState = getEquippedWeaponVisualState(profile);
+
+    if (!weaponState) {
+      playerWeapon.className = 'player-weapon hidden';
+      playerWeapon.removeAttribute('title');
+      return;
+    }
+
+    const { item, tierClass, skinClass, auraClass, auraLabel } = weaponState;
+    playerWeapon.className = `player-weapon ${tierClass} ${skinClass}${auraClass ? ` ${auraClass}` : ''}`;
+    playerWeapon.setAttribute('title', `${item.name} · ${auraLabel}`);
+  }
+
   function updateHud() {
     const swordCount = getSwordCount();
     const stageConfig = getStageConfig();
@@ -3610,7 +4347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scoreText.textContent = score;
     levelText.textContent = level;
     swordCountText.textContent = swordCount;
-    const encounterName = stageConfig.isFinalTrial ? '종언의 시험' : bossDefinition.name;
+    const encounterName = bossDefinition.name;
     bossName.textContent = `${getStageLabel()} ${encounterName}`;
     boss.dataset.bossId = stageConfig.bossId;
     boss.dataset.mode = stageConfig.isInfinite ? 'infinite' : stageConfig.isFinalTrial ? 'final' : 'campaign';
@@ -3652,7 +4389,9 @@ document.addEventListener('DOMContentLoaded', () => {
     hp = MAX_HP;
     level = 1;
     score = 0;
-    activeCombatStats = getPlayerCombatStats(loadPlayerProfile());
+    const currentProfile = loadPlayerProfile();
+    activeCombatStats = getPlayerCombatStats(currentProfile);
+    updatePlayerWeaponVisual(currentProfile);
     activeShieldCharges = Math.min(1, activeCombatStats.shieldCharges);
     player.classList.toggle('pet-shield', activeShieldCharges > 0);
     setupPetCompanion();
@@ -4041,12 +4780,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const spacing = 34;
     const firstOffset = -((count - 1) * spacing) / 2;
 
+    const weaponVisual = getEquippedWeaponVisualState(loadPlayerProfile());
+    const swordWaveClass = weaponVisual?.swordWaveClass || 'tier-common';
+
     for (let i = 0; i < count; i += 1) {
       const sword = document.createElement('div');
-      sword.className = 'sword-wave homing-sword';
+      sword.className = `sword-wave homing-sword ${swordWaveClass}`;
 
-      const x = startX + firstOffset + i * spacing - 23;
-      const y = startY;
+      const baseHalf = weaponVisual?.tier === 'legendary' ? 26 : weaponVisual?.tier === 'epic' ? 23.5 : weaponVisual?.tier === 'rare' ? 21.5 : 20;
+      const x = startX + firstOffset + i * spacing - baseHalf;
+      const y = startY - (weaponVisual?.tier === 'legendary' ? 3 : 0);
       const targetX = targetBaseX + firstOffset + i * spacing;
       const targetY = targetBaseY;
       const dx = targetX - x;
@@ -4350,7 +5093,8 @@ document.addEventListener('DOMContentLoaded', () => {
     boss.classList.add('boss-dead');
     clearEffect.classList.remove('hidden');
     const petUnlockText = rewards.unlockedPets.length > 0 ? ` · ${rewards.unlockedPets.join(', ')} 해금!` : '';
-    clearEffect.textContent = `${getStageLabel()} BOSS CLEAR!${petUnlockText}`;
+    const bonusText = rewards.bonusMessages && rewards.bonusMessages.length > 0 ? ` · ${rewards.bonusMessages[0]}` : '';
+    clearEffect.textContent = `${getStageLabel()} BOSS CLEAR!${petUnlockText}${bonusText}`;
 
     setTimer(() => {
       if (!gameRunning) return;
@@ -4416,6 +5160,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <h2>기사 전투 불능</h2>
         <p class="desc">도달 단계: ${getStageLabel(level)}<br />처치 보스: ${currentRunBossKills}마리<br />플레이 시간: ${formatElapsedTime(elapsedSeconds)}<br />최종 점수: ${score}${shopRefreshed ? '<br />상점 상품이 갱신되었습니다.' : ''}</p>
         <p class="desc">획득 경험치: ${currentRunRewards.exp}<br />획득 골드: ${currentRunRewards.gold}<br />획득 강화석: ${currentRunRewards.enhancementStones}${currentRunRewards.equipmentChests > 0 ? `<br />획득 장비 상자: ${currentRunRewards.equipmentChests}개` : ''}<br />펫 경험치: ${currentRunRewards.petExp}${currentRunRewards.petExpDiscarded > 0 ? ` (${currentRunRewards.petExpDiscarded} EXP 미정산 · 보스 3마리 필요)` : ''}${currentRunRewards.levelsGained > 0 ? `<br />기사 레벨 상승: +${currentRunRewards.levelsGained}` : ''}${currentRunRewards.petLevelsGained > 0 ? `<br />펫 레벨 상승: +${currentRunRewards.petLevelsGained}` : ''}</p>
+        <div class="growth-advice">
+          <strong>다음 도전 성장 추천</strong>
+          <ul>${getGrowthAdvice(finalProfile, level).map((text) => `<li>${text}</li>`).join('')}</ul>
+        </div>
 
         <div id="rankingSaveArea" class="ranking-save-area">
           <label for="nicknameInput">닉네임 입력</label>
@@ -4464,21 +5212,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (equipmentPanel) {
     equipmentPanel.addEventListener('click', (event) => {
+      const batchButton = event.target.closest('[data-batch-dismantle-tier]');
+      if (batchButton) {
+        batchDismantleEquipment(batchButton.dataset.batchDismantleTier);
+        return;
+      }
+
       const equipButton = event.target.closest('[data-equip-id]');
       if (equipButton && !equipButton.disabled) {
         equipItem(equipButton.dataset.equipId);
         return;
       }
 
-      const levelUpButton = event.target.closest('[data-level-up-id]');
-      if (levelUpButton && !levelUpButton.disabled) {
-        levelUpEquipment(levelUpButton.dataset.levelUpId);
+      const levelUpSlotButton = event.target.closest('[data-level-up-slot]');
+      if (levelUpSlotButton && !levelUpSlotButton.disabled) {
+        levelUpEquipmentSlot(levelUpSlotButton.dataset.levelUpSlot);
         return;
       }
 
       const enhanceButton = event.target.closest('[data-enhance-id]');
       if (enhanceButton && !enhanceButton.disabled) {
         enhanceEquipment(enhanceButton.dataset.enhanceId);
+        return;
+      }
+
+      const lockButton = event.target.closest('[data-lock-id]');
+      if (lockButton) {
+        setEquipmentLock(lockButton.dataset.lockId, lockButton.dataset.lockNext === 'lock');
         return;
       }
 
@@ -4499,6 +5259,16 @@ document.addEventListener('DOMContentLoaded', () => {
     openEquipmentChestBtn.addEventListener('click', openEquipmentChest);
   }
 
+  if (closeChestResultBtn) {
+    closeChestResultBtn.addEventListener('click', closeChestResultPopup);
+  }
+
+  if (chestResultOverlay) {
+    chestResultOverlay.addEventListener('click', (event) => {
+      if (event.target === chestResultOverlay) closeChestResultPopup();
+    });
+  }
+
   if (shopPanel) {
     shopPanel.addEventListener('click', (event) => {
       const offerButton = event.target.closest('[data-shop-offer-id]');
@@ -4515,6 +5285,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (enterBattleBtn) {
     enterBattleBtn.addEventListener('click', enterBattle);
+  }
+
+  if (openTutorialBtn) {
+    openTutorialBtn.addEventListener('click', showTutorial);
+  }
+
+  if (closeTutorialBtn) {
+    closeTutorialBtn.addEventListener('click', closeTutorial);
+  }
+
+  if (skipTutorialBtn) {
+    skipTutorialBtn.addEventListener('click', () => {
+      try { localStorage.setItem(TUTORIAL_STORAGE_KEY, 'true'); } catch (error) {}
+      closeTutorial();
+    });
   }
 
   loadAudioSettings();
@@ -4603,6 +5388,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderRankings();
   renderLobby();
   resetGame();
+  if (shouldShowTutorial()) showTutorial();
 });
   </script>
   <script>

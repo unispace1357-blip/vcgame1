@@ -1,5 +1,5 @@
 {
-  "id": "./",
+  "id": "./?source=pwa",
   "name": "어비스 레이드: 마왕의 시험",
   "short_name": "어비스 레이드",
   "description": "마왕의 공격 패턴을 피하고 장비와 펫을 성장시키는 보스 레이드 게임",
@@ -7,12 +7,18 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
-  "orientation": "any",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
   "background_color": "#070707",
   "theme_color": "#8d2424",
   "prefer_related_applications": false,
-  "categories": ["games", "entertainment"],
+  "categories": [
+    "games",
+    "entertainment"
+  ],
   "icons": [
     {
       "src": "./icons/icon-192.png",
@@ -37,6 +43,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "어비스 레이드 로비와 보스 전투"
+    },
+    {
+      "src": "./screenshots/screenshot-mobile.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "모바일 전투 화면과 성장 시스템"
     }
   ]
 }

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'abyss-raid-v1';
+const CACHE_VERSION = 'abyss-raid-v10-chest-popup';
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -14,6 +14,9 @@ const APP_SHELL = [
   './asset/dungeon_background.webp',
   './asset/knight.png',
   './asset/sword_wave.png',
+  './asset/player_weapon_base.png',
+  './asset/player_weapon_blue.png',
+  './asset/player_weapon_red.png',
   './asset/meteor.png',
   './asset/explosion.png',
   './asset/floor_blast.png',
@@ -28,7 +31,9 @@ const APP_SHELL = [
   './asset/pets/gold_mimic_portrait.png',
   './asset/pets/ar_dungeon_rear.png',
   './asset/pets/lume_dungeon_rear.png',
-  './asset/pets/mora_dungeon_rear.png'
+  './asset/pets/mora_dungeon_rear.png',
+  './screenshots/screenshot-mobile.png',
+  './screenshots/screenshot-wide.png'
 ];
 
 self.addEventListener('install', (event) => {
